@@ -1,10 +1,18 @@
-import { ThemedView } from "@/components/themed-view";
-import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
 import { login } from "@/services/auth";
 import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from "react-native";
 
 export default function LoginScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,30 +28,64 @@ export default function LoginScreen() {
       setError(result.error);
     }
   }
+
   return (
-    <ThemedView style={styles.container}>
+    <View
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
+    >
+      <Text style={StyleSheet.flatten([styles.title, { color: colors.text }])}>
+        Bem-vindo
+      </Text>
+
       <TextInput
-        style={styles.textInput}
+        style={StyleSheet.flatten([
+          styles.textInput,
+          {
+            backgroundColor: colors.backgroundElement,
+            borderColor: colors.backgroundSelected,
+            color: colors.text,
+          },
+        ])}
         placeholder="Email"
+        placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
       />
+
       <TextInput
-        style={styles.textInput}
+        style={StyleSheet.flatten([
+          styles.textInput,
+          {
+            backgroundColor: colors.backgroundElement,
+            borderColor: colors.backgroundSelected,
+            color: colors.text,
+          },
+        ])}
         placeholder="Senha"
+        placeholderTextColor={colors.textSecondary}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
-      {error && <Text style={styles.error}>{error}</Text>}
+
+      {error && (
+        <Text style={StyleSheet.flatten([styles.error, { color: "#EF4444" }])}>
+          {error}
+        </Text>
+      )}
+
       <Button
         title={loading ? "Entrando..." : "Entrar"}
         onPress={handleSubmit}
         disabled={loading}
+        color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}
       />
-    </ThemedView>
+    </View>
   );
 }
 
@@ -51,47 +93,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    flexDirection: "column",
-    backgroundColor: "black",
-    color: "white",
-  },
-  textInput: {
-    marginVertical: Spacing.two,
-    paddingHorizontal: Spacing.two,
-    paddingVertical: Spacing.one,
-    borderRadius: Spacing.two,
-    borderStyle: "solid",
-    borderWidth: 1,
-    backgroundColor: "white",
-    borderColor: "#e5e5e5",
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: "center",
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    padding: Spacing.six,
   },
   title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginBottom: Spacing.six,
     textAlign: "center",
   },
-  code: {
-    textTransform: "uppercase",
+  textInput: {
+    marginVertical: Spacing.three,
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.three,
+    borderWidth: 1,
+    fontSize: 16,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: "stretch",
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  error: {
+    fontSize: 14,
+    marginTop: Spacing.two,
+    textAlign: "center",
   },
-  error: { color: "red" },
 });
