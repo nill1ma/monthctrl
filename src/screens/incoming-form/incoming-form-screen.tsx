@@ -10,7 +10,7 @@ import {
   IncomingFormValues,
   incomingSchema,
 } from "@/schemas/transaction-schema";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function IncomingFormScreen() {
   const colors = useTheme();
@@ -24,6 +24,8 @@ export default function IncomingFormScreen() {
     dataSingleIncoming,
     isLoadingSingleIncoming,
   } = useIncomings(undefined, id);
+
+  const router = useRouter();
 
   const {
     control,
@@ -48,10 +50,14 @@ export default function IncomingFormScreen() {
           origin: values.origin,
           reference: values.reference,
         });
+        return router.push({
+          pathname: "/details/[reference]",
+          params: { reference: values.reference },
+        });
       } else {
         await createMutation(values);
+        return router.push("/");
       }
-      return <Redirect href="/" />;
     } catch (error) {
       console.error(new Error(String(error)));
     }

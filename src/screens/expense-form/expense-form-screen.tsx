@@ -6,13 +6,23 @@ import { TransactionForm } from "@/components/organisms/transaction-form";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useTheme } from "@/hooks/use-theme";
 import { ExpenseFormValues, expenseSchema } from "@/schemas/transaction-schema";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 
 export default function ExpenseFormScreen() {
   const colors = useTheme();
-
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const {
+    createMutation,
+    isCreating,
+    updateMutation,
+    isUpdating,
+    dataSingleExpense,
+    isLoadingSingleExpense,
+  } = useExpenses(undefined, id);
+
+  const router = useRouter();
 
   const {
     control,
@@ -28,15 +38,6 @@ export default function ExpenseFormScreen() {
     },
   });
 
-  const {
-    createMutation,
-    isCreating,
-    updateMutation,
-    isUpdating,
-    dataSingleExpense,
-    isLoadingSingleExpense,
-  } = useExpenses();
-
   const onSubmit = handleSubmit(async (values) => {
     try {
       if (id) {
@@ -46,10 +47,14 @@ export default function ExpenseFormScreen() {
           destination: values.destination,
           reference: values.reference,
         });
+        return router.push({
+          pathname: "/details/[reference]",
+          params: { reference: values.reference },
+        });
       } else {
         await createMutation(values);
+        return router.push("/");
       }
-      return <Redirect href="/" />;
     } catch (error) {
       console.error(new Error(String(error)));
     }

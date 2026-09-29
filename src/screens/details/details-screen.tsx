@@ -13,7 +13,12 @@ import {
 
 type Section = {
   title: string;
-  data: { id: string; label: string; value: number }[];
+  data: {
+    id: string;
+    label: string;
+    value: number;
+    type: "incomings" | "expenses";
+  }[];
 };
 
 export default function DetailsScreen() {
@@ -63,6 +68,7 @@ export default function DetailsScreen() {
           id: item.id,
           label: item.origin,
           value: item.value || 0,
+          type: "incomings",
         })) || [],
     },
     {
@@ -72,20 +78,15 @@ export default function DetailsScreen() {
           id: item.id,
           label: item.destination,
           value: item.value,
+          type: "expenses",
         })) || [],
     },
   ];
 
-  const catchType = (data: any) => {
-    return typeof data === "object" && data !== null && "origin" in data
-      ? true
-      : false;
-  };
-
   const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
-  const handlePressItem = (id: string, isIcoming: boolean) => {
+  const handlePressItem = (id: string, type: "incomings" | "expenses") => {
     router.push({
-      pathname: `/${isIcoming ? "incomings" : "expenses"}/edit/[id]`,
+      pathname: `/${type}/edit/[id]`,
       params: { id },
     });
   };
@@ -107,7 +108,7 @@ export default function DetailsScreen() {
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => handlePressItem(item.id, catchType(item))}
+            onPress={() => handlePressItem(item.id, item.type)}
             android_ripple={{ color: colors.backgroundSelected }}
             style={({ pressed }) => [
               styles.row,

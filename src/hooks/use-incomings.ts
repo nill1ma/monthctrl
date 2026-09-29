@@ -1,9 +1,9 @@
 import {
-    createIncoming,
-    deleteIncoming,
-    getIncomingByReference,
-    getIncomingsById,
-    updateIncoming,
+  createIncoming,
+  deleteIncoming,
+  getIncomingByReference,
+  getIncomingsById,
+  updateIncoming,
 } from "@/services/incomings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -42,6 +42,7 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.refetchQueries({ queryKey: ["details"] });
     },
   });
 

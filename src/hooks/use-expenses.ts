@@ -1,9 +1,9 @@
 import {
-    createExpense,
-    deleteExpense,
-    getExpenseById,
-    getExpenseByReference,
-    updateExpense,
+  createExpense,
+  deleteExpense,
+  getExpenseById,
+  getExpenseByReference,
+  updateExpense,
 } from "@/services/expenses";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -36,12 +36,13 @@ export function useExpenses(reference?: string, id?: string) {
 
   const { mutateAsync: updateMutation, isPending: isUpdating } = useMutation({
     mutationFn: updateExpense,
-    mutationKey: ["update-expense"],
+    mutationKey: ["update-expense", id],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.refetchQueries({ queryKey: ["details"] });
     },
   });
 
