@@ -1,0 +1,20 @@
+import { z } from "zod";
+
+const baseFields = {
+  reference: z.string().min(1, "Reference is a required field"),
+  value: z.number().positive("Value must be positive"),
+};
+
+export const incomingSchema = z.object({
+  ...baseFields,
+  origin: z.string().min(1, "Origin is a required field"),
+});
+
+export const expenseSchema = z.object({
+  ...baseFields,
+  destination: z.string().min(1, "Destination is a required field"),
+});
+
+export type IncomingFormValues = z.infer<typeof incomingSchema>;
+export type ExpenseFormValues = z.infer<typeof expenseSchema>;
+export type TransactionFormValues = IncomingFormValues | ExpenseFormValues;

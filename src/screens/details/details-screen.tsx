@@ -1,12 +1,14 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
+import { useTheme } from "@/hooks/use-theme";
+import { useRouter } from "expo-router";
 import {
-    ActivityIndicator,
-    SectionList,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 type Section = {
@@ -15,10 +17,10 @@ type Section = {
 };
 
 export default function DetailsScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useTheme();
   const { reference, incomings, expenses, isLoading, isError } =
     useDetailsTransactions();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -74,7 +76,19 @@ export default function DetailsScreen() {
     },
   ];
 
+  const catchType = (data: any) => {
+    return typeof data === "object" && data !== null && "origin" in data
+      ? true
+      : false;
+  };
+
   const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
+  const handlePressItem = (id: string, isIcoming: boolean) => {
+    router.push({
+      pathname: `/${isIcoming ? "incomings" : "expenses"}/edit/[id]`,
+      params: { id },
+    });
+  };
 
   return (
     <View
@@ -92,26 +106,46 @@ export default function DetailsScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <View
-            style={StyleSheet.flatten([
+          <Pressable
+            onPress={() => handlePressItem(item.id, catchType(item))}
+            android_ripple={{ color: colors.backgroundSelected }}
+            style={({ pressed }) => [
               styles.row,
               {
-                backgroundColor: colors.backgroundElement,
+                backgroundColor: pressed
+                  ? colors.backgroundSelected
+                  : colors.backgroundElement,
                 borderBottomColor: colors.backgroundSelected,
               },
-            ])}
+            ]}
           >
-            <Text
-              style={StyleSheet.flatten([styles.label, { color: colors.text }])}
+            <View
+              style={StyleSheet.flatten([
+                styles.row,
+                {
+                  backgroundColor: colors.backgroundElement,
+                  borderBottomColor: colors.backgroundSelected,
+                },
+              ])}
             >
-              {item.label}
-            </Text>
-            <Text
-              style={StyleSheet.flatten([styles.value, { color: colors.text }])}
-            >
-              {formatCurrency(item.value)}
-            </Text>
-          </View>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.label,
+                  { color: colors.text },
+                ])}
+              >
+                {item.label}
+              </Text>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.value,
+                  { color: colors.text },
+                ])}
+              >
+                {formatCurrency(item.value)}
+              </Text>
+            </View>
+          </Pressable>
         )}
         renderSectionHeader={({ section }) => (
           <Text

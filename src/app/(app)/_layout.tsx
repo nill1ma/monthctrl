@@ -1,5 +1,7 @@
 import { Redirect, Slot } from "expo-router";
+import { View } from "react-native";
 
+import { SideDrawer } from "@/components/organisms/side-drawer";
 import { useAuth } from "@/context/auth";
 
 export default function AppLayout() {
@@ -8,5 +10,10 @@ export default function AppLayout() {
   if (loading) return null;
   if (!session) return <Redirect href="/login" />;
 
-  return <Slot />;
+  return (
+    <View style={{ flex: 1 }}>
+      <Slot />
+      <SideDrawer />
+    </View>
+  );
 }

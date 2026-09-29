@@ -1,0 +1,175 @@
+===== incoming-form =====
+// screens/incoming-form/incoming-create-screen.tsx
+import { Colors } from "@/constants/theme";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { StyleSheet, useColorScheme, View } from "react-native";
+
+import { TransactionForm } from "@/components/organisms/transaction-form";
+import {
+  IncomingFormValues,
+  incomingSchema,
+} from "@/schemas/transaction-schema";
+import { createIncoming } from "@/services/incomings";
+
+export default function IncomingCreateScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IncomingFormValues>({
+    resolver: zodResolver(incomingSchema),
+  });
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TransactionForm
+        control={control}
+        errors={errors}
+        secondFieldName="origin"
+        secondFieldLabel="Origem"
+        onSubmit={handleSubmit((values) => createIncoming(values))}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+===== expense-form =====
+import { TransactionForm } from "@/components/organisms/transaction-form";
+import { Colors } from "@/constants/theme";
+import { ExpenseFormValues, expenseSchema } from "@/schemas/transaction-schema";
+import { createExpense } from "@/services/expenses";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { StyleSheet, useColorScheme, View } from "react-native";
+
+export default function ExpenseCreateScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ExpenseFormValues>({
+    resolver: zodResolver(expenseSchema),
+  });
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TransactionForm
+        control={control}
+        errors={errors}
+        secondFieldName="destination"
+        secondFieldLabel="Destino"
+        onSubmit={handleSubmit((values) => createExpense(values))}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+===== month-year-picker =====
+import { Picker } from "@react-native-picker/picker";
+import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
+
+const MONTH_LABELS = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+function buildOptions() {
+  const currentYear = new Date().getFullYear();
+  const options: { value: string; label: string }[] = [];
+
+  for (let year = currentYear - 2; year <= currentYear + 3; year++) {
+    MONTH_LABELS.forEach((label, index) => {
+      const month = String(index + 1).padStart(2, "0");
+      options.push({ value: `${year}-${month}`, label: `${label} ${year}` });
+    });
+  }
+
+  return options;
+}
+
+const OPTIONS = buildOptions();
+
+type MonthYearPickerProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  label: string;
+  error?: string;
+};
+
+export function MonthYearPicker<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  error,
+}: MonthYearPickerProps<TFieldValues>) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, value } }) => (
+        <View style={styles.container}>
+          <Text style={styles.label}>{label}</Text>
+          {/* <Picker selectedValue={value} onValueChange={onChange}>
+            {OPTIONS.map((option) => (
+              <Picker.Item
+                key={option.value}
+                label={option.label}
+                value={option.value}
+              />
+            ))}
+          </Picker> */}
+          <Picker
+            selectedValue={value}
+            onValueChange={onChange}
+            style={{ backgroundColor: colors.background, color: colors.text }}
+            dropdownIconColor={colors.text}
+          >
+            {OPTIONS.map((option) => (
+              <Picker.Item
+                key={option.value}
+                label={option.label}
+                value={option.value}
+                color={colors.text}
+              />
+            ))}
+          </Picker>
+          {error && <Text style={styles.error}>{error}</Text>}
+        </View>
+      )}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { marginBottom: 12 },
+  label: { fontSize: 14, marginBottom: 4, fontWeight: "500" },
+  error: { color: "red", fontSize: 12, marginTop: 4 },
+});
