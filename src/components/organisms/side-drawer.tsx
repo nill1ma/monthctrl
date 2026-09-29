@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { logout } from "@/services/auth";
+import { LanguageToggle } from "../ui/language-toggle";
 
 const DRAWER_WIDTH = 240;
 
@@ -95,6 +96,7 @@ export function SideDrawer() {
           </Pressable>
 
           <View style={styles.themeToggleWrapper}>
+            <LanguageToggle />
             <ThemeToggle />
           </View>
         </View>
@@ -158,6 +160,7 @@ const styles = StyleSheet.create({
   },
   themeToggleWrapper: {
     marginTop: Spacing.four,
+    gap: Spacing.two,
   },
   handle: {
     position: "absolute",
