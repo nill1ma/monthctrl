@@ -40,6 +40,7 @@ export default function IncomingFormScreen() {
       value: 0,
       origin: "",
       reference: "",
+      category_id: "",
     },
   });
 
@@ -51,6 +52,7 @@ export default function IncomingFormScreen() {
           value: values.value,
           origin: values.origin,
           reference: values.reference,
+          category_id: values.category_id,
         });
         return router.push({
           pathname: "/details/[reference]",
@@ -71,6 +73,7 @@ export default function IncomingFormScreen() {
         value: dataSingleIncoming.value ?? 0,
         origin: dataSingleIncoming.origin ?? "",
         reference: dataSingleIncoming.reference ?? "",
+        category_id: dataSingleIncoming.category_id ?? "",
       });
     }
   }, [dataSingleIncoming, isLoadingSingleIncoming, reset]);
@@ -87,6 +90,7 @@ export default function IncomingFormScreen() {
       <TransactionForm
         control={control}
         errors={errors}
+        type="incoming"
         secondFieldName="origin"
         secondFieldLabel={formatMessage({
           id: "create.update.incomings.origin",

@@ -5,6 +5,8 @@ import { Button, StyleSheet, useColorScheme, View } from "react-native";
 
 import { FormField } from "@/components/molecules/form-field";
 import { MonthYearPicker } from "@/components/molecules/month-year-picker";
+import { CategoryPicker } from "../molecules/category-picker";
+import { CurrencyPicker } from "../molecules/currency-picker";
 
 type TransactionFormProps<T extends FieldValues> = {
   control: Control<T>;
@@ -13,6 +15,7 @@ type TransactionFormProps<T extends FieldValues> = {
   isSubmitting?: boolean;
   secondFieldName: Path<T>;
   secondFieldLabel: string;
+  type: "incoming" | "expense";
 };
 
 export function TransactionForm<T extends FieldValues>({
@@ -22,6 +25,7 @@ export function TransactionForm<T extends FieldValues>({
   isSubmitting,
   secondFieldName,
   secondFieldLabel,
+  type,
 }: TransactionFormProps<T>) {
   const { formatMessage } = useIntl();
   const colorScheme = useColorScheme();
@@ -40,6 +44,12 @@ export function TransactionForm<T extends FieldValues>({
         label={secondFieldLabel}
         error={errors[secondFieldName]?.message}
       />
+      <CurrencyPicker
+        control={control}
+        name={"currency" as Path<T>}
+        label={formatMessage({ id: "form.currency" })}
+        error={errors.currency?.message}
+      />
       <FormField
         control={control}
         name={"value" as Path<T>}
@@ -47,6 +57,15 @@ export function TransactionForm<T extends FieldValues>({
         keyboardType="numeric"
         error={errors.value?.message}
       />
+
+      <CategoryPicker
+        control={control}
+        name={"category_id" as Path<T>}
+        label={formatMessage({ id: "form.category" })}
+        error={errors.category_id?.message}
+        type={type}
+      />
+
       <Button
         title={
           isSubmitting

@@ -60,6 +60,8 @@ export const es: Record<string, string> = {
 
   "form.reference": "Referencia",
   "form.value": "Valor",
+  "form.currency": "Moneda",
+  "form.category": "Categoría",
   "form.saving": "Guardando...",
   "form.save": "Guardar",
 };

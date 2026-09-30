@@ -60,6 +60,8 @@ export const en: Record<string, string> = {
 
   "form.reference": "Reference",
   "form.value": "Value",
+  "form.currency": "Currency",
+  "form.category": "Category",
   "form.saving": "Saving...",
   "form.save": "Save",
 };

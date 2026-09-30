@@ -13,11 +13,11 @@ export async function getExpenses() {
 
 export async function getExpenseByReference(
   reference: string,
-): Promise<Pick<Expense, "id" | "value" | "destination">[]> {
+): Promise<Pick<Expense, "id" | "value" | "destination" | "category_id">[]> {
   const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("expenses")
-    .select("id, value, destination")
+    .select("id, value, destination, category_id")
     .eq("reference", reference)
     .eq("user_id", userId);
   if (error) throw new Error(error.message);
@@ -28,7 +28,7 @@ export async function getExpenseById(id: string) {
   const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("expenses")
-    .select("id, destination, value, reference")
+    .select("id, destination, value, reference, category_id")
     .eq("id", id)
     .eq("user_id", userId)
     .single();

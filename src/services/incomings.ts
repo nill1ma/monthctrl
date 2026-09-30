@@ -21,7 +21,7 @@ export async function getIncomingsById(id: string) {
 
   const { data, error } = await supabase
     .from("incomings")
-    .select("id, origin, value, reference")
+    .select("id, origin, value, reference, category_id")
     .eq("id", id)
     .eq("user_id", userId)
     .single();

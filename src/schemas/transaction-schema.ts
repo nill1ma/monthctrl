@@ -3,6 +3,8 @@ import { z } from "zod";
 const baseFields = {
   reference: z.string().min(1, "Reference is a required field"),
   value: z.number().positive("Value must be positive"),
+  currency: z.string().min(1, "Currency is a required field"),
+  category_id: z.string().min(1, "Category is a required field"),
 };
 
 export const incomingSchema = z.object({

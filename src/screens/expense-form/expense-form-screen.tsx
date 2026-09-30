@@ -37,6 +37,7 @@ export default function ExpenseFormScreen() {
       value: 0,
       destination: "",
       reference: "",
+      category_id: "",
     },
   });
 
@@ -48,6 +49,7 @@ export default function ExpenseFormScreen() {
           value: values.value,
           destination: values.destination,
           reference: values.reference,
+          category_id: values.category_id,
         });
         return router.push({
           pathname: "/details/[reference]",
@@ -68,6 +70,7 @@ export default function ExpenseFormScreen() {
         value: dataSingleExpense.value ?? 0,
         destination: dataSingleExpense.destination ?? "",
         reference: dataSingleExpense.reference ?? "",
+        category_id: dataSingleExpense.category_id ?? "",
       });
     }
   }, [dataSingleExpense, isLoadingSingleExpense, reset]);
@@ -84,6 +87,7 @@ export default function ExpenseFormScreen() {
       <TransactionForm
         control={control}
         errors={errors}
+        type="expense"
         secondFieldName="destination"
         secondFieldLabel={formatMessage({
           id: "create.update.expenses.destination",

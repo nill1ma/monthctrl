@@ -6,13 +6,14 @@ export interface Expense {
   due_date: string | null;
   user_id: string;
   reference: string;
+  category_id: string | null;
 }
 export type DetailsIncomingData = Pick<Expense, "id" | "value" | "destination">;
 export type CreateExpense = Pick<
   Expense,
-  "value" | "destination" | "reference"
+  "value" | "destination" | "reference" | "category_id"
 >;
 export type UpdateExpense = Pick<
   Expense,
-  "id" | "value" | "destination" | "reference"
+  "id" | "value" | "destination" | "reference" | "category_id"
 >;
