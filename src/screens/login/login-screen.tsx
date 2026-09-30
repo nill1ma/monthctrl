@@ -1,6 +1,7 @@
 import { Colors, Spacing } from "@/constants/theme";
 import { login } from "@/services/auth";
 import { useState } from "react";
+import { useIntl } from "react-intl";
 import {
   Button,
   StyleSheet,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
+  const { formatMessage } = useIntl();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const [email, setEmail] = useState("");
@@ -37,7 +39,7 @@ export default function LoginScreen() {
       ])}
     >
       <Text style={StyleSheet.flatten([styles.title, { color: colors.text }])}>
-        Bem-vindo
+        {formatMessage({ id: "login.welcome" })}
       </Text>
 
       <TextInput
@@ -49,7 +51,7 @@ export default function LoginScreen() {
             color: colors.text,
           },
         ])}
-        placeholder="Email"
+        placeholder={formatMessage({ id: "login.emailPlaceholder" })}
         placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
         keyboardType="email-address"
@@ -66,7 +68,7 @@ export default function LoginScreen() {
             color: colors.text,
           },
         ])}
-        placeholder="Senha"
+        placeholder={formatMessage({ id: "login.passwordPlaceholder" })}
         placeholderTextColor={colors.textSecondary}
         secureTextEntry
         value={password}
@@ -80,7 +82,11 @@ export default function LoginScreen() {
       )}
 
       <Button
-        title={loading ? "Entrando..." : "Entrar"}
+        title={
+          loading
+            ? formatMessage({ id: "login.loggingIn" })
+            : formatMessage({ id: "login.loginButton" })
+        }
         onPress={handleSubmit}
         disabled={loading}
         color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}

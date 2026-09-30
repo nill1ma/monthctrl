@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useIntl } from "react-intl";
 import { StyleSheet, Text, View } from "react-native";
 
 import { TransactionForm } from "@/components/organisms/transaction-form";
@@ -13,6 +14,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function IncomingFormScreen() {
+  const { formatMessage } = useIntl();
   const colors = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -76,7 +78,7 @@ export default function IncomingFormScreen() {
   if (isCreating || isUpdating || isLoadingSingleIncoming)
     return (
       <Text style={{ color: colors.text }}>
-        Wait, we are finishing this operation...
+        {formatMessage({ id: "create.update.loading" })}
       </Text>
     );
 
@@ -86,7 +88,9 @@ export default function IncomingFormScreen() {
         control={control}
         errors={errors}
         secondFieldName="origin"
-        secondFieldLabel="Origem"
+        secondFieldLabel={formatMessage({
+          id: "create.update.incomings.origin",
+        })}
         onSubmit={onSubmit}
       />
     </View>

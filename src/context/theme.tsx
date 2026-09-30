@@ -16,7 +16,12 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useRNColorScheme();
   const [mode, setMode] = useState<ThemeMode>("system");
 
-  const scheme: Scheme = mode === "system" ? (systemScheme ?? "light") : mode;
+  const scheme: Scheme =
+    mode === "system"
+      ? systemScheme === "dark" || systemScheme === "light"
+        ? systemScheme
+        : "light"
+      : mode;
 
   return (
     <ThemeContext.Provider value={{ mode, scheme, setMode }}>

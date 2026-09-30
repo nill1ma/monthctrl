@@ -11,8 +11,13 @@ type LocaleContextType = {
 const LocaleContext = createContext<LocaleContextType | null>(null);
 
 function detectLocale(): Locale {
-  const deviceLanguage = Localization.getLocales()[0]?.languageCode;
-  return deviceLanguage === "es" ? "es-ES" : "en";
+  try {
+    const deviceLanguage = Localization.getLocales()[0]?.languageCode;
+    return deviceLanguage === "es" ? "es-ES" : "en";
+  } catch (error) {
+    console.error("Error detecting locale:", error);
+    return "en";
+  }
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {

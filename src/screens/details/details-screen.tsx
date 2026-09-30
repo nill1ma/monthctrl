@@ -1,7 +1,9 @@
 import { Spacing } from "@/constants/theme";
+import { useLocale } from "@/context/locale";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
 import { useTheme } from "@/hooks/use-theme";
 import { useRouter } from "expo-router";
+import { useIntl } from "react-intl";
 import {
   ActivityIndicator,
   Pressable,
@@ -12,7 +14,7 @@ import {
 } from "react-native";
 
 type Section = {
-  title: string;
+  titleId: string;
   data: {
     id: string;
     label: string;
@@ -22,6 +24,8 @@ type Section = {
 };
 
 export default function DetailsScreen() {
+  const { formatMessage, formatNumber } = useIntl();
+  const { locale } = useLocale();
   const colors = useTheme();
   const { reference, incomings, expenses, isLoading, isError } =
     useDetailsTransactions();
@@ -54,7 +58,7 @@ export default function DetailsScreen() {
             { color: colors.textSecondary },
           ])}
         >
-          Não foi possível carregar os detalhes.
+          {formatMessage({ id: "details.error" })}
         </Text>
       </View>
     );
@@ -62,7 +66,7 @@ export default function DetailsScreen() {
 
   const sections: Section[] = [
     {
-      title: "Incomings",
+      titleId: "details.incomings",
       data:
         incomings?.map((item) => ({
           id: item.id,
@@ -72,7 +76,7 @@ export default function DetailsScreen() {
         })) || [],
     },
     {
-      title: "Expenses",
+      titleId: "details.expenses",
       data:
         expenses?.map((item) => ({
           id: item.id,
@@ -83,7 +87,24 @@ export default function DetailsScreen() {
     },
   ];
 
-  const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
+  const getCurrency = () => {
+    switch (locale) {
+      case "es-ES":
+        return "EUR";
+      case "en":
+        return "USD";
+      default:
+        return "BRL";
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return formatNumber(value, {
+      style: "currency",
+      currency: getCurrency(),
+    });
+  };
+
   const handlePressItem = (id: string, type: "incomings" | "expenses") => {
     router.push({
       pathname: `/${type}/edit/[id]`,
@@ -155,7 +176,7 @@ export default function DetailsScreen() {
               { color: colors.text },
             ])}
           >
-            {section.title}
+            {formatMessage({ id: section.titleId })}
           </Text>
         )}
         ListEmptyComponent={
@@ -165,7 +186,7 @@ export default function DetailsScreen() {
               { color: colors.textSecondary },
             ])}
           >
-            Nenhum dado encontrado.
+            {formatMessage({ id: "details.empty" })}
           </Text>
         }
       />

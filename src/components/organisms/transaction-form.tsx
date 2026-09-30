@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { useIntl } from "react-intl";
 import { Button, StyleSheet, useColorScheme, View } from "react-native";
 
 import { FormField } from "@/components/molecules/form-field";
@@ -22,6 +23,7 @@ export function TransactionForm<T extends FieldValues>({
   secondFieldName,
   secondFieldLabel,
 }: TransactionFormProps<T>) {
+  const { formatMessage } = useIntl();
   const colorScheme = useColorScheme();
 
   return (
@@ -29,7 +31,7 @@ export function TransactionForm<T extends FieldValues>({
       <MonthYearPicker
         control={control}
         name={"reference" as Path<T>}
-        label="Referência"
+        label={formatMessage({ id: "form.reference" })}
         error={errors.reference?.message}
       />
       <FormField
@@ -41,12 +43,16 @@ export function TransactionForm<T extends FieldValues>({
       <FormField
         control={control}
         name={"value" as Path<T>}
-        label="Valor"
+        label={formatMessage({ id: "form.value" })}
         keyboardType="numeric"
         error={errors.value?.message}
       />
       <Button
-        title={isSubmitting ? "Salvando..." : "Salvar"}
+        title={
+          isSubmitting
+            ? formatMessage({ id: "form.saving" })
+            : formatMessage({ id: "form.save" })
+        }
         onPress={onSubmit}
         disabled={isSubmitting}
         color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}

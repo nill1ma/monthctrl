@@ -1,10 +1,12 @@
 export const en: Record<string, string> = {
   "login.title": "Login",
+  "login.welcome": "Welcome",
   "login.email": "Email",
   "login.emailPlaceholder": "user@example.com",
   "login.password": "Password",
   "login.passwordPlaceholder": "••••••••",
   "login.loginButton": "Login",
+  "login.loggingIn": "Logging in...",
   "login.registerButton": "Register",
   "login.createAccount": "Create Account",
   "login.haveAccount": "Already have an account?",
@@ -36,4 +38,28 @@ export const en: Record<string, string> = {
   "details.delete.expense.tooltip": "Delete expense",
   "details.goBack.button": "Go to list",
   "details.goBack.button.tooltip": "Go to list page",
+
+  "list.title": "Transactions",
+  "list.incoming": "Incomings",
+  "list.expense": "Expenses",
+  "list.balance": "Balance",
+  "list.logout": "Logout",
+  "list.empty": "No transactions found.",
+  "list.loading": "Loading...",
+  "list.drawer.menu": "Menu",
+  "list.drawer.transactions": "Transactions",
+  "list.drawer.create.incoming": "Create Incoming",
+  "list.drawer.create.expense": "Create Expense",
+  "list.drawer.logout": "Logout",
+
+  "details.loading": "Loading...",
+  "details.error": "Unable to load details.",
+  "details.empty": "No data found.",
+
+  "create.update.loading": "Wait, we are finishing this operation...",
+
+  "form.reference": "Reference",
+  "form.value": "Value",
+  "form.saving": "Saving...",
+  "form.save": "Save",
 };

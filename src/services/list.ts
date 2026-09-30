@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import {
-    IncomingsExpensesTransaction,
-    IncomingsExpensesTransactionResponse,
+  IncomingsExpensesTransaction,
+  IncomingsExpensesTransactionResponse,
 } from "@/types/list.types";
 import * as Crypto from "expo-crypto";
 

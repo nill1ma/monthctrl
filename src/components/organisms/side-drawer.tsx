@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useIntl } from "react-intl";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -16,12 +17,13 @@ import { LanguageToggle } from "../ui/language-toggle";
 const DRAWER_WIDTH = 240;
 
 const LINKS = [
-  { label: "Listagem", href: "/" },
-  { label: "Nova receita", href: "/incomings/create" },
-  { label: "Nova despesa", href: "/expenses/create" },
+  { labelId: "list.drawer.transactions", href: "/" },
+  { labelId: "list.drawer.create.incoming", href: "/incomings/create" },
+  { labelId: "list.drawer.create.expense", href: "/expenses/create" },
 ] as const;
 
 export function SideDrawer() {
+  const { formatMessage } = useIntl();
   const [open, setOpen] = useState(false);
   const colors = useTheme();
   const router = useRouter();
@@ -64,7 +66,9 @@ export function SideDrawer() {
 
       <Animated.View style={[styles.panel, panelStyle]}>
         <View style={[styles.content, { backgroundColor: colors.background }]}>
-          <Text style={[styles.title, { color: colors.text }]}>Menu</Text>
+          <Text style={[styles.title, { color: colors.text }]}>
+            {formatMessage({ id: "list.drawer.menu" })}
+          </Text>
 
           {LINKS.map((link) => (
             <Pressable
@@ -76,7 +80,7 @@ export function SideDrawer() {
               onPress={() => handleNavigate(link.href)}
             >
               <Text style={[styles.linkText, { color: colors.text }]}>
-                {link.label}
+                {formatMessage({ id: link.labelId })}
               </Text>
             </Pressable>
           ))}
@@ -91,7 +95,7 @@ export function SideDrawer() {
             <Text
               style={[styles.linkText, styles.logoutText, { color: "#EF4444" }]}
             >
-              Sair
+              {formatMessage({ id: "list.drawer.logout" })}
             </Text>
           </Pressable>
 

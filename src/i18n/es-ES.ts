@@ -1,10 +1,12 @@
 export const es: Record<string, string> = {
   "login.title": "Iniciar sesión",
+  "login.welcome": "Bienvenido",
   "login.email": "Correo electrónico",
   "login.emailPlaceholder": "usuario@ejemplo.com",
   "login.password": "Contraseña",
   "login.passwordPlaceholder": "••••••••",
   "login.loginButton": "Iniciar sesión",
+  "login.loggingIn": "Iniciando sesión...",
   "login.registerButton": "Registrarse",
   "login.createAccount": "Crear cuenta",
   "login.haveAccount": "¿Ya tienes una cuenta?",
@@ -36,4 +38,28 @@ export const es: Record<string, string> = {
   "details.delete.expense.tooltip": "Eliminar gasto",
   "details.goBack.button": "Ir a la lista",
   "details.goBack.button.tooltip": "Ir a la página de la lista",
+
+  "list.title": "Transacciones",
+  "list.incoming": "Ingresos",
+  "list.expense": "Gastos",
+  "list.balance": "Saldo",
+  "list.logout": "Cerrar sesión",
+  "list.empty": "No se encontraron transacciones.",
+  "list.loading": "Cargando...",
+  "list.drawer.menu": "Menú",
+  "list.drawer.transactions": "Transacciones",
+  "list.drawer.create.incoming": "Crear ingreso",
+  "list.drawer.create.expense": "Crear gasto",
+  "list.drawer.logout": "Cerrar sesión",
+
+  "details.loading": "Cargando...",
+  "details.error": "No se pudieron cargar los detalles.",
+  "details.empty": "No se encontraron datos.",
+
+  "create.update.loading": "Espere, estamos terminando esta operación...",
+
+  "form.reference": "Referencia",
+  "form.value": "Valor",
+  "form.saving": "Guardando...",
+  "form.save": "Guardar",
 };

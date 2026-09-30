@@ -12,7 +12,14 @@ export function I18Provider({ children }: { children: React.ReactNode }) {
   const { locale } = useLocale();
 
   return (
-    <IntlProvider locale={locale} messages={messages[locale]}>
+    <IntlProvider
+      locale={locale}
+      messages={messages[locale]}
+      defaultLocale="en"
+      onError={(error) => {
+        console.error("IntlProvider error:", error);
+      }}
+    >
       {children}
     </IntlProvider>
   );

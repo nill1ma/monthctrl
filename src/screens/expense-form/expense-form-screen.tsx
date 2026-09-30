@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useIntl } from "react-intl";
 import { StyleSheet, Text, View } from "react-native";
 
 import { TransactionForm } from "@/components/organisms/transaction-form";
@@ -10,6 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 
 export default function ExpenseFormScreen() {
+  const { formatMessage } = useIntl();
   const colors = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -73,7 +75,7 @@ export default function ExpenseFormScreen() {
   if (isCreating || isUpdating || isLoadingSingleExpense)
     return (
       <Text style={{ color: colors.text }}>
-        Wait, we are finishing this operation...
+        {formatMessage({ id: "create.update.loading" })}
       </Text>
     );
 
@@ -83,7 +85,9 @@ export default function ExpenseFormScreen() {
         control={control}
         errors={errors}
         secondFieldName="destination"
-        secondFieldLabel="Destino"
+        secondFieldLabel={formatMessage({
+          id: "create.update.expenses.destination",
+        })}
         onSubmit={onSubmit}
       />
     </View>

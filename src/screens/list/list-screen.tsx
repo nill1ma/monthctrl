@@ -1,19 +1,21 @@
 import { Spacing } from "@/constants/theme";
+import { useLocale } from "@/context/locale";
 import { useListTransactions } from "@/hooks/use-list-transactions";
 import { useTheme } from "@/hooks/use-theme";
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useIntl } from "react-intl";
 import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 export default function List() {
-  const [loading, setLoading] = useState(false);
+  const { formatMessage, formatNumber } = useIntl();
+  const { locale } = useLocale();
   const colors = useTheme();
   const { transactions, isLoading, fetchNextPage, hasNextPage } =
     useListTransactions();
@@ -28,8 +30,22 @@ export default function List() {
   );
   const totalNet = transactions.reduce((sum, t) => sum + t.net_income, 0);
 
+  const getCurrency = () => {
+    switch (locale) {
+      case "es-ES":
+        return "EUR";
+      case "en":
+        return "USD";
+      default:
+        return "BRL";
+    }
+  };
+
   const formatCurrency = (value: number) => {
-    return `R$ ${value.toFixed(2)}`;
+    return formatNumber(value, {
+      style: "currency",
+      currency: getCurrency(),
+    });
   };
 
   return (
@@ -52,7 +68,7 @@ export default function List() {
             { color: colors.text },
           ])}
         >
-          Transações
+          {formatMessage({ id: "list.title" })}
         </Text>
       </View>
 
@@ -70,7 +86,7 @@ export default function List() {
               { color: colors.textSecondary },
             ])}
           >
-            Receitas
+            {formatMessage({ id: "list.incoming" })}
           </Text>
           <Text
             style={StyleSheet.flatten([
@@ -94,7 +110,7 @@ export default function List() {
                 { color: colors.textSecondary },
               ])}
             >
-              Despesas
+              {formatMessage({ id: "list.expense" })}
             </Text>
             <Text
               style={StyleSheet.flatten([
@@ -112,7 +128,7 @@ export default function List() {
                 { color: colors.textSecondary },
               ])}
             >
-              Saldo
+              {formatMessage({ id: "list.balance" })}
             </Text>
             <Text
               style={StyleSheet.flatten([
@@ -168,7 +184,7 @@ export default function List() {
                       { color: colors.textSecondary },
                     ])}
                   >
-                    Receitas
+                    {formatMessage({ id: "list.incoming" })}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -186,7 +202,7 @@ export default function List() {
                       { color: colors.textSecondary },
                     ])}
                   >
-                    Despesas
+                    {formatMessage({ id: "list.expense" })}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -216,7 +232,7 @@ export default function List() {
                   { color: colors.textSecondary },
                 ])}
               >
-                Nenhuma transação encontrada.
+                {formatMessage({ id: "list.empty" })}
               </Text>
             )}
           </View>
