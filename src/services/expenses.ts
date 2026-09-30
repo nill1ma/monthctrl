@@ -28,7 +28,7 @@ export async function getExpenseById(id: string) {
   const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("expenses")
-    .select("id, destination, value, reference, category_id")
+    .select("id, destination, value, reference, category_id, currency")
     .eq("id", id)
     .eq("user_id", userId)
     .single();
@@ -61,6 +61,8 @@ export async function updateExpense(formData: UpdateExpense) {
       destination: formData.destination,
       value: formData.value,
       reference: formData.reference,
+      currency: formData.currency,
+      category_id: formData.category_id,
       user_id: userId,
     })
     .eq("id", formData.id)

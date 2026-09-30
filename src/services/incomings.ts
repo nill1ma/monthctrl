@@ -21,7 +21,7 @@ export async function getIncomingsById(id: string) {
 
   const { data, error } = await supabase
     .from("incomings")
-    .select("id, origin, value, reference, category_id")
+    .select("id, origin, value, reference, category_id, currency")
     .eq("id", id)
     .eq("user_id", userId)
     .single();
@@ -69,6 +69,8 @@ export async function updateIncoming(formData: UpdateIncoming) {
       origin: formData.origin,
       value: formData.value,
       reference: formData.reference,
+      category_id: formData.category_id,
+      currency: formData.currency,
       user_id: userId,
     })
     .eq("id", formData.id)

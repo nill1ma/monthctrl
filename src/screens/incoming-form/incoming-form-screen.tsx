@@ -41,10 +41,12 @@ export default function IncomingFormScreen() {
       origin: "",
       reference: "",
       category_id: "",
+      currency: "",
     },
   });
 
   const onSubmit = handleSubmit(async (values) => {
+    console.log("Incoming values:  ", values);
     try {
       if (id) {
         await updateMutation({
@@ -53,6 +55,7 @@ export default function IncomingFormScreen() {
           origin: values.origin,
           reference: values.reference,
           category_id: values.category_id,
+          currency: values.currency,
         });
         return router.push({
           pathname: "/details/[reference]",
@@ -74,6 +77,7 @@ export default function IncomingFormScreen() {
         origin: dataSingleIncoming.origin ?? "",
         reference: dataSingleIncoming.reference ?? "",
         category_id: dataSingleIncoming.category_id ?? "",
+        currency: dataSingleIncoming.currency ?? "",
       });
     }
   }, [dataSingleIncoming, isLoadingSingleIncoming, reset]);

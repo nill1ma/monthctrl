@@ -38,6 +38,7 @@ export default function ExpenseFormScreen() {
       destination: "",
       reference: "",
       category_id: "",
+      currency: "",
     },
   });
 
@@ -50,6 +51,7 @@ export default function ExpenseFormScreen() {
           destination: values.destination,
           reference: values.reference,
           category_id: values.category_id,
+          currency: values.currency,
         });
         return router.push({
           pathname: "/details/[reference]",
@@ -71,6 +73,7 @@ export default function ExpenseFormScreen() {
         destination: dataSingleExpense.destination ?? "",
         reference: dataSingleExpense.reference ?? "",
         category_id: dataSingleExpense.category_id ?? "",
+        currency: dataSingleExpense.currency ?? "",
       });
     }
   }, [dataSingleExpense, isLoadingSingleExpense, reset]);
