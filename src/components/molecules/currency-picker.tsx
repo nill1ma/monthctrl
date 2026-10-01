@@ -27,6 +27,8 @@ export function CurrencyPicker<TFieldValues extends FieldValues>({
 }: CurrencyPickerProps<TFieldValues>) {
   const colors = useTheme();
 
+  console.log("CurrencyPicker values:", currencyCodes.code("CAD"));
+
   return (
     <Controller
       control={control}

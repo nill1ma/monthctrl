@@ -137,7 +137,7 @@ export default function DetailsScreen() {
                 backgroundColor: pressed
                   ? colors.backgroundSelected
                   : colors.backgroundElement,
-                borderBottomColor: colors.backgroundSelected,
+                // borderBottomColor: colors.backgroundSelected,
               },
             ]}
           >
@@ -146,7 +146,8 @@ export default function DetailsScreen() {
                 styles.row,
                 {
                   backgroundColor: colors.backgroundElement,
-                  borderBottomColor: colors.backgroundSelected,
+                  // borderBottomColor: colors.backgroundSelected,
+                  gap: 3,
                 },
               ])}
             >
@@ -156,7 +157,7 @@ export default function DetailsScreen() {
                   { color: colors.text },
                 ])}
               >
-                {item.label}
+                {item.label}:
               </Text>
               <Text
                 style={StyleSheet.flatten([
@@ -215,7 +216,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.four,
-    borderBottomWidth: 1,
     borderRadius: 8,
   },
   label: { fontSize: 16 },

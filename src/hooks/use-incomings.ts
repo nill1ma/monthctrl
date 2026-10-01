@@ -42,6 +42,7 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.invalidateQueries({ queryKey: ["incoming"] });
       queryClient.refetchQueries({ queryKey: ["details"] });
     },
   });
