@@ -5,12 +5,14 @@ import { Button, StyleSheet, useColorScheme, View } from "react-native";
 
 import { FormField } from "@/components/molecules/form-field";
 import { MonthYearPicker } from "@/components/molecules/month-year-picker";
+import { getCurrencyDecimals } from "@/lib/currency";
 import { CategoryPicker } from "../molecules/category-picker";
 import { CurrencyPicker } from "../molecules/currency-picker";
 
 type TransactionFormProps<T extends FieldValues> = {
   control: Control<T>;
   errors: Partial<Record<keyof T, { message?: string }>>;
+  watch: (name: Path<T>) => any;
   onSubmit: () => void;
   isSubmitting?: boolean;
   secondFieldName: Path<T>;
@@ -21,6 +23,7 @@ type TransactionFormProps<T extends FieldValues> = {
 export function TransactionForm<T extends FieldValues>({
   control,
   errors,
+  watch,
   onSubmit,
   isSubmitting,
   secondFieldName,
@@ -29,6 +32,9 @@ export function TransactionForm<T extends FieldValues>({
 }: TransactionFormProps<T>) {
   const { formatMessage } = useIntl();
   const colorScheme = useColorScheme();
+
+  const currency = watch("currency" as Path<T>);
+  const decimals = currency ? getCurrencyDecimals(currency) : 2;
 
   return (
     <View style={styles.container}>
@@ -56,6 +62,7 @@ export function TransactionForm<T extends FieldValues>({
         label={formatMessage({ id: "form.value" })}
         keyboardType="numeric"
         error={errors.value?.message}
+        decimals={decimals}
       />
 
       <CategoryPicker

@@ -1,7 +1,6 @@
-import { Spacing } from "@/constants/theme";
-import { useLocale } from "@/context/locale";
+import { Colors, Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
-import { useTheme } from "@/hooks/use-theme";
+import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
 import {
@@ -10,35 +9,75 @@ import {
   SectionList,
   StyleSheet,
   Text,
+  useColorScheme,
   View,
 } from "react-native";
 
-type Section = {
-  titleId: string;
-  data: {
-    id: string;
-    label: string;
-    value: number;
-    type: "incomings" | "expenses";
-  }[];
+type TransactionType = "incomings" | "expenses";
+
+type Row = {
+  id: string;
+  label: string;
+  value: number;
+  currency: string;
+  type: TransactionType;
 };
 
+type Section = {
+  title: string;
+  currency: string;
+  data: Row[];
+};
+
+function groupByCurrency(
+  items: {
+    id: string;
+    value: number;
+    currency: string;
+    label: string;
+    type: TransactionType;
+  }[],
+  sectionLabel: string,
+): Section[] {
+  const groups = new Map<string, Row[]>();
+
+  for (const item of items) {
+    const existing = groups.get(item.currency) ?? [];
+    existing.push({
+      id: item.id,
+      label: item.label,
+      value: item.value,
+      currency: item.currency,
+      type: item.type,
+    });
+    groups.set(item.currency, existing);
+  }
+
+  return Array.from(groups.entries()).map(([currency, data]) => ({
+    title: `${sectionLabel} ${getCurrencyFlag(currency)} ${currency}`,
+    currency,
+    data,
+  }));
+}
+
 export default function DetailsScreen() {
-  const { formatMessage, formatNumber } = useIntl();
-  const { locale } = useLocale();
-  const colors = useTheme();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const { formatMessage } = useIntl();
+  const router = useRouter();
   const { reference, incomings, expenses, isLoading, isError } =
     useDetailsTransactions();
-  const router = useRouter();
+
+  function handlePressItem(id: string, type: TransactionType) {
+    router.push({
+      pathname: `/${type}/edit/[id]`,
+      params: { id },
+    });
+  }
 
   if (isLoading) {
     return (
-      <View
-        style={StyleSheet.flatten([
-          styles.center,
-          { backgroundColor: colors.background },
-        ])}
-      >
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator color={colors.text} />
       </View>
     );
@@ -46,82 +85,41 @@ export default function DetailsScreen() {
 
   if (isError) {
     return (
-      <View
-        style={StyleSheet.flatten([
-          styles.center,
-          { backgroundColor: colors.background },
-        ])}
-      >
-        <Text
-          style={StyleSheet.flatten([
-            styles.errorText,
-            { color: colors.textSecondary },
-          ])}
-        >
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.textSecondary }]}>
           {formatMessage({ id: "details.error" })}
         </Text>
       </View>
     );
   }
 
-  const sections: Section[] = [
-    {
-      titleId: "details.incomings",
-      data:
-        incomings?.map((item) => ({
-          id: item.id,
-          label: item.origin,
-          value: item.value || 0,
-          type: "incomings",
-        })) || [],
-    },
-    {
-      titleId: "details.expenses",
-      data:
-        expenses?.map((item) => ({
-          id: item.id,
-          label: item.destination,
-          value: item.value,
-          type: "expenses",
-        })) || [],
-    },
-  ];
+  const incomingSections = groupByCurrency(
+    (incomings ?? []).map((item) => ({
+      id: item.id,
+      value: item.value,
+      currency: item.currency,
+      label: item.origin,
+      type: "incomings" as const,
+    })),
+    formatMessage({ id: "details.incomings" }),
+  );
 
-  const getCurrency = () => {
-    switch (locale) {
-      case "es-ES":
-        return "EUR";
-      case "en":
-        return "USD";
-      default:
-        return "BRL";
-    }
-  };
+  const expenseSections = groupByCurrency(
+    (expenses ?? []).map((item) => ({
+      id: item.id,
+      value: item.value,
+      currency: item.currency,
+      label: item.destination,
+      type: "expenses" as const,
+    })),
+    formatMessage({ id: "details.expenses" }),
+  );
 
-  const formatCurrency = (value: number) => {
-    return formatNumber(value, {
-      style: "currency",
-      currency: getCurrency(),
-    });
-  };
-
-  const handlePressItem = (id: string, type: "incomings" | "expenses") => {
-    router.push({
-      pathname: `/${type}/edit/[id]`,
-      params: { id },
-    });
-  };
+  const sections = [...incomingSections, ...expenseSections];
 
   return (
-    <View
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
-    >
-      <Text style={StyleSheet.flatten([styles.title, { color: colors.text }])}>
-        {reference}
-      </Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.text }]}>{reference}</Text>
 
       <SectionList
         sections={sections}
@@ -137,56 +135,25 @@ export default function DetailsScreen() {
                 backgroundColor: pressed
                   ? colors.backgroundSelected
                   : colors.backgroundElement,
-                // borderBottomColor: colors.backgroundSelected,
+                borderBottomColor: colors.backgroundSelected,
               },
             ]}
           >
-            <View
-              style={StyleSheet.flatten([
-                styles.row,
-                {
-                  backgroundColor: colors.backgroundElement,
-                  // borderBottomColor: colors.backgroundSelected,
-                  gap: 3,
-                },
-              ])}
-            >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.label,
-                  { color: colors.text },
-                ])}
-              >
-                {item.label}:
-              </Text>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.value,
-                  { color: colors.text },
-                ])}
-              >
-                {formatCurrency(item.value)}
-              </Text>
-            </View>
+            <Text style={[styles.label, { color: colors.text }]}>
+              {item.label}
+            </Text>
+            <Text style={[styles.value, { color: colors.text }]}>
+              {formatCurrency(item.value, item.currency)}
+            </Text>
           </Pressable>
         )}
         renderSectionHeader={({ section }) => (
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.text },
-            ])}
-          >
-            {formatMessage({ id: section.titleId })}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {section.title}
           </Text>
         )}
         ListEmptyComponent={
-          <Text
-            style={StyleSheet.flatten([
-              styles.empty,
-              { color: colors.textSecondary },
-            ])}
-          >
+          <Text style={[styles.empty, { color: colors.textSecondary }]}>
             {formatMessage({ id: "details.empty" })}
           </Text>
         }
@@ -199,11 +166,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: Spacing.four },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { fontSize: 16 },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: Spacing.four,
-  },
+  title: { fontSize: 24, fontWeight: "600", marginBottom: Spacing.four },
   listContent: { gap: Spacing.three },
   sectionTitle: {
     fontSize: 18,
@@ -216,6 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.four,
+    borderBottomWidth: 1,
     borderRadius: 8,
   },
   label: { fontSize: 16 },

@@ -31,6 +31,7 @@ export default function IncomingFormScreen() {
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
     reset,
@@ -46,7 +47,6 @@ export default function IncomingFormScreen() {
   });
 
   const onSubmit = handleSubmit(async (values) => {
-    console.log("Incoming values:  ", values);
     try {
       if (id) {
         await updateMutation({
@@ -93,6 +93,7 @@ export default function IncomingFormScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <TransactionForm
         control={control}
+        watch={watch}
         errors={errors}
         type="incoming"
         secondFieldName="origin"

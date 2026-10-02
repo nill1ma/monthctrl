@@ -33,11 +33,11 @@ export async function getIncomingsById(id: string) {
 
 export async function getIncomingByReference(
   reference: string,
-): Promise<Pick<Incoming, "id" | "value" | "origin">[]> {
+): Promise<Pick<Incoming, "id" | "value" | "origin" | "currency">[]> {
   const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("incomings")
-    .select("id, value, origin")
+    .select("id, value, origin, currency")
     .eq("reference", reference)
     .eq("user_id", userId);
   if (error) throw new Error(error.message);

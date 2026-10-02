@@ -31,6 +31,10 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.invalidateQueries({ queryKey: ["transaction-references"] });
+      queryClient.invalidateQueries({
+        queryKey: ["transactions-by-references"],
+      });
     },
   });
 
@@ -44,6 +48,10 @@ export function useIncomings(reference?: string, id?: string) {
       });
       queryClient.invalidateQueries({ queryKey: ["incoming"] });
       queryClient.refetchQueries({ queryKey: ["details"] });
+      queryClient.invalidateQueries({ queryKey: ["transaction-references"] });
+      queryClient.invalidateQueries({
+        queryKey: ["transactions-by-references"],
+      });
     },
   });
 

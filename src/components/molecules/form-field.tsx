@@ -1,5 +1,6 @@
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { applyCurrencyMask } from "@/lib/currency";
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 import {
   KeyboardTypeOptions,
@@ -17,6 +18,7 @@ type FormFieldProps<TFieldValues extends FieldValues> = {
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   formEditValue?: string | number;
+  decimals?: number;
 };
 
 export function FormField<TFieldValues extends FieldValues>({
@@ -27,6 +29,7 @@ export function FormField<TFieldValues extends FieldValues>({
   keyboardType,
   secureTextEntry,
   formEditValue,
+  decimals,
 }: FormFieldProps<TFieldValues>) {
   const colors = useTheme();
 
@@ -50,20 +53,19 @@ export function FormField<TFieldValues extends FieldValues>({
               },
             ]}
             onBlur={onBlur}
-            onChangeText={(text) =>
+            onChangeText={(text) => {
               onChange(
-                keyboardType === "numeric"
-                  ? Number(text)
-                  : (text as unknown as string),
-              )
-            }
-            value={
-              formEditValue != null
-                ? String(formEditValue)
-                : value != null
-                  ? String(value)
-                  : ""
-            }
+                decimals !== undefined
+                  ? applyCurrencyMask(text, decimals)
+                  : text,
+              );
+              // if (decimals !== undefined) {
+              //   onChange(sanitizeDecimalInput(text, decimals));
+              // } else {
+              //   onChange(text);
+              // }
+            }}
+            value={value != null ? String(value) : ""}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
             placeholderTextColor={colors.textSecondary}
@@ -89,3 +91,10 @@ const styles = StyleSheet.create({
   inputError: { borderColor: "#EF4444" },
   error: { fontSize: 12, marginTop: Spacing.one },
 });
+
+// function sanitizeDecimalInput(text: string, decimals: number): string {
+//   const normalized = text.replace(",", ".");
+//   const [intPart, decPart] = normalized.split(".");
+//   if (decPart === undefined) return normalized;
+//   return `${intPart}.${decPart.slice(0, decimals)}`;
+// }

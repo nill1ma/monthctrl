@@ -2,23 +2,35 @@ import { Spacing } from "@/constants/theme";
 import { useLocale } from "@/context/locale";
 import { useListTransactions } from "@/hooks/use-list-transactions";
 import { useTheme } from "@/hooks/use-theme";
+import { groupByReference } from "@/utils/group-transactions";
 import { Link } from "expo-router";
+import { useMemo, useRef } from "react";
 import { useIntl } from "react-intl";
 import {
-    ActivityIndicator,
-    FlatList,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 export default function List() {
   const { formatMessage, formatNumber } = useIntl();
   const { locale } = useLocale();
   const colors = useTheme();
-  const { transactions, isLoading, fetchNextPage, hasNextPage } =
-    useListTransactions();
+  const {
+    references,
+    transactions,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useListTransactions();
+
+  const grouped = useMemo(() => groupByReference(transactions), [transactions]);
+
+  const onEndReachedCalledDuringMomentum = useRef(true);
 
   const totalIncoming = transactions.reduce(
     (sum, t) => sum + t.incoming_value,
@@ -144,9 +156,26 @@ export default function List() {
 
       {/* Lista de transações */}
       <FlatList
-        data={transactions}
-        keyExtractor={(item) => item.id}
+        data={grouped}
+        keyExtractor={(item) => item.reference}
         contentContainerStyle={styles.listContent}
+        // onMomentumScrollBegin={() => {
+        //   onEndReachedCalledDuringMomentum.current = false;
+        // }}
+        onScrollBeginDrag={() => {
+          onEndReachedCalledDuringMomentum.current = false;
+        }}
+        onEndReached={() => {
+          if (
+            hasNextPage &&
+            !isFetchingNextPage &&
+            !onEndReachedCalledDuringMomentum.current
+          ) {
+            fetchNextPage();
+            onEndReachedCalledDuringMomentum.current = true;
+          }
+        }}
+        onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
           <Link href={`/details/${item.reference}`} asChild>
             <Pressable
@@ -217,10 +246,6 @@ export default function List() {
             </Pressable>
           </Link>
         )}
-        onEndReached={() => {
-          if (hasNextPage) fetchNextPage();
-        }}
-        onEndReachedThreshold={0.5}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             {isLoading ? (

@@ -28,6 +28,7 @@ export default function ExpenseFormScreen() {
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
     reset,
@@ -89,6 +90,7 @@ export default function ExpenseFormScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <TransactionForm
         control={control}
+        watch={watch}
         errors={errors}
         type="expense"
         secondFieldName="destination"

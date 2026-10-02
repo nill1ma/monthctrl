@@ -13,11 +13,13 @@ export async function getExpenses() {
 
 export async function getExpenseByReference(
   reference: string,
-): Promise<Pick<Expense, "id" | "value" | "destination" | "category_id">[]> {
+): Promise<
+  Pick<Expense, "id" | "value" | "destination" | "currency" | "category_id">[]
+> {
   const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("expenses")
-    .select("id, value, destination, category_id")
+    .select("id, value, destination, currency, category_id")
     .eq("reference", reference)
     .eq("user_id", userId);
   if (error) throw new Error(error.message);

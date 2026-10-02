@@ -171,7 +171,13 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_distinct_references: {
+        Args: { p_limit: number; p_offset: number; p_user_id: string }
+        Returns: {
+          reference: string
+          total_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

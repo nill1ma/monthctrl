@@ -1,0 +1,470 @@
+===== CurrencyPicker =====
+import { Picker } from "@react-native-picker/picker";
+import * as currencyCodes from "currency-codes";
+import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
+
+import { useTheme } from "@/hooks/use-theme";
+
+const RELEVANT_CODES = ["CAD", "USD", "EUR", "GBP", "BRL"];
+
+const OPTIONS = RELEVANT_CODES.map((code) => {
+  const info = currencyCodes.code(code);
+  return { value: code, label: `${code} — ${info?.currency ?? code}` };
+});
+
+type CurrencyPickerProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  label: string;
+  error?: string;
+  onCurrencyChange?: (currencyCode: string) => void;
+};
+
+export function CurrencyPicker<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  error,
+  onCurrencyChange,
+}: CurrencyPickerProps<TFieldValues>) {
+  const colors = useTheme();
+
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, value } }) => (
+        <View style={styles.container}>
+          <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+          <View
+            style={[
+              styles.pickerWrapper,
+              { backgroundColor: colors.backgroundElement },
+            ]}
+          >
+            <Picker
+              selectedValue={value}
+              onValueChange={(nextValue) => {
+                onChange(nextValue);
+                onCurrencyChange?.(nextValue);
+              }}
+              style={{ color: colors.text }}
+              dropdownIconColor={colors.text}
+            >
+              {OPTIONS.map((option) => (
+                <Picker.Item
+                  key={option.value}
+                  label={option.label}
+                  value={option.value}
+                  style={{
+                    color: colors.text,
+                    backgroundColor: colors.backgroundElement,
+                  }}
+                />
+              ))}
+            </Picker>
+          </View>
+          {error && <Text style={styles.error}>{error}</Text>}
+        </View>
+      )}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { marginBottom: 12 },
+  label: { fontSize: 14, marginBottom: 4, fontWeight: "500" },
+  pickerWrapper: { borderRadius: 8, overflow: "hidden" },
+  error: { color: "red", fontSize: 12, marginTop: 4 },
+});
+
+===== CategoryPicker =====
+import { Picker } from "@react-native-picker/picker";
+import { useQuery } from "@tanstack/react-query";
+import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
+
+import { useTheme } from "@/hooks/use-theme";
+import { getCategories } from "@/services/categories";
+
+type CategoryPickerProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  type: "incoming" | "expense";
+  label: string;
+  error?: string;
+};
+
+export function CategoryPicker<TFieldValues extends FieldValues>({
+  control,
+  name,
+  type,
+  label,
+  error,
+}: CategoryPickerProps<TFieldValues>) {
+  const colors = useTheme();
+  const { data: categories, isLoading } = useQuery({
+    queryKey: ["categories", type],
+    queryFn: () => getCategories(type),
+  });
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, value } }) => (
+        <View style={styles.container}>
+          <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+          <View
+            style={[
+              styles.pickerWrapper,
+              { backgroundColor: colors.backgroundElement },
+            ]}
+          >
+            <Picker
+              selectedValue={value ?? ""}
+              onValueChange={onChange}
+              style={{ color: colors.text }}
+              //   dropdownIconColor={colors.text}
+            >
+              {categories?.map((category) => (
+                <Picker.Item
+                  key={category.id}
+                  label={category.name}
+                  value={category.id}
+                  style={{
+                    color: colors.text,
+                    backgroundColor: colors.backgroundElement,
+                  }}
+                />
+              ))}
+            </Picker>
+          </View>
+          {error && <Text style={styles.error}>{error}</Text>}
+        </View>
+      )}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { marginBottom: 12 },
+  label: { fontSize: 14, marginBottom: 4, fontWeight: "500" },
+  pickerWrapper: { borderRadius: 8, overflow: "hidden" },
+  error: { color: "red", fontSize: 12, marginTop: 4 },
+});
+
+===== FormField =====
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
+import {
+  KeyboardTypeOptions,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+type FormFieldProps<TFieldValues extends FieldValues> = {
+  control: Control<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  label: string;
+  error?: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
+  formEditValue?: string | number;
+  decimals?: number;
+};
+
+export function FormField<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  error,
+  keyboardType,
+  secureTextEntry,
+  formEditValue,
+  decimals,
+}: FormFieldProps<TFieldValues>) {
+  const colors = useTheme();
+
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <View style={styles.container}>
+          <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+          <TextInput
+            style={[
+              {
+                ...styles.input,
+                backgroundColor: colors.backgroundElement,
+                color: colors.text,
+              },
+              error && styles.inputError,
+              {
+                borderColor: error ? "#EF4444" : colors.backgroundSelected,
+              },
+            ]}
+            onBlur={onBlur}
+            onChangeText={(text) => {
+              if (decimals !== undefined) {
+                onChange(sanitizeDecimalInput(text, decimals));
+              } else {
+                onChange(text);
+              }
+            }}
+            value={
+              formEditValue != null
+                ? String(formEditValue)
+                : value != null
+                  ? String(value)
+                  : ""
+            }
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
+            placeholderTextColor={colors.textSecondary}
+          />
+          {error && (
+            <Text style={[styles.error, { color: "#EF4444" }]}>{error}</Text>
+          )}
+        </View>
+      )}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { marginBottom: Spacing.three },
+  label: { fontSize: 14, marginBottom: Spacing.one, fontWeight: "500" },
+  input: {
+    borderWidth: 1,
+    borderRadius: Spacing.two,
+    padding: Spacing.three,
+    fontSize: 16,
+  },
+  inputError: { borderColor: "#EF4444" },
+  error: { fontSize: 12, marginTop: Spacing.one },
+});
+
+function sanitizeDecimalInput(text: string, decimals: number): string {
+  const normalized = text.replace(",", ".");
+  const [intPart, decPart] = normalized.split(".");
+  if (decPart === undefined) return normalized;
+  return `${intPart}.${decPart.slice(0, decimals)}`;
+}
+
+===== TransactionForm =====
+import { Spacing } from "@/constants/theme";
+import { Control, FieldValues, Path } from "react-hook-form";
+import { useIntl } from "react-intl";
+import { Button, StyleSheet, useColorScheme, View } from "react-native";
+
+import { FormField } from "@/components/molecules/form-field";
+import { MonthYearPicker } from "@/components/molecules/month-year-picker";
+import { getCurrencyDecimals } from "@/lib/currency";
+import { CategoryPicker } from "../molecules/category-picker";
+import { CurrencyPicker } from "../molecules/currency-picker";
+
+type TransactionFormProps<T extends FieldValues> = {
+  control: Control<T>;
+  errors: Partial<Record<keyof T, { message?: string }>>;
+  watch: (name: Path<T>) => any;
+  onSubmit: () => void;
+  isSubmitting?: boolean;
+  secondFieldName: Path<T>;
+  secondFieldLabel: string;
+  type: "incoming" | "expense";
+};
+
+export function TransactionForm<T extends FieldValues>({
+  control,
+  errors,
+  watch,
+  onSubmit,
+  isSubmitting,
+  secondFieldName,
+  secondFieldLabel,
+  type,
+}: TransactionFormProps<T>) {
+  const { formatMessage } = useIntl();
+  const colorScheme = useColorScheme();
+
+  const currency = watch("currency" as Path<T>);
+  const decimals = currency ? getCurrencyDecimals(currency) : 2;
+
+  return (
+    <View style={styles.container}>
+      <MonthYearPicker
+        control={control}
+        name={"reference" as Path<T>}
+        label={formatMessage({ id: "form.reference" })}
+        error={errors.reference?.message}
+      />
+      <FormField
+        control={control}
+        name={secondFieldName}
+        label={secondFieldLabel}
+        error={errors[secondFieldName]?.message}
+      />
+      <CurrencyPicker
+        control={control}
+        name={"currency" as Path<T>}
+        label={formatMessage({ id: "form.currency" })}
+        error={errors.currency?.message}
+      />
+      <FormField
+        control={control}
+        name={"value" as Path<T>}
+        label={formatMessage({ id: "form.value" })}
+        keyboardType="numeric"
+        error={errors.value?.message}
+        decimals={decimals}
+      />
+
+      <CategoryPicker
+        control={control}
+        name={"category_id" as Path<T>}
+        label={formatMessage({ id: "form.category" })}
+        error={errors.category_id?.message}
+        type={type}
+      />
+
+      <Button
+        title={
+          isSubmitting
+            ? formatMessage({ id: "form.saving" })
+            : formatMessage({ id: "form.save" })
+        }
+        onPress={onSubmit}
+        disabled={isSubmitting}
+        color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: Spacing.four,
+  },
+});
+
+===== lib/currency.ts =====
+export function getCurrencyDecimals(currencyCode: string): number {
+  const { maximumFractionDigits } = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+  }).resolvedOptions();
+
+  return maximumFractionDigits ?? 2;
+}
+
+export function truncateToDecimals(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.trunc(value * factor) / factor;
+}
+
+export function formatCurrency(
+  value: number,
+  currencyCode: string,
+  locale = "en-US",
+): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currencyCode,
+  }).format(value);
+}
+
+===== schema =====
+import { z } from "zod";
+
+const baseFields = {
+  reference: z.string().min(1, "Reference is a required field"),
+  value: z.number().positive("Value must be positive"),
+  currency: z.string().min(1, "Currency is a required field"),
+  category_id: z.string().min(1, "Category is a required field"),
+};
+
+export const incomingSchema = z.object({
+  ...baseFields,
+  origin: z.string().min(1, "Origin is a required field"),
+});
+
+export const expenseSchema = z.object({
+  ...baseFields,
+  destination: z.string().min(1, "Destination is a required field"),
+});
+
+export type IncomingFormValues = z.infer<typeof incomingSchema>;
+export type ExpenseFormValues = z.infer<typeof expenseSchema>;
+export type TransactionFormValues = IncomingFormValues | ExpenseFormValues;
+
+===== services/categories =====
+import { getAuthenticatedUserId, supabase } from "@/lib/supabase";
+
+export async function getCategories(type: "incoming" | "expense") {
+  const userId = await getAuthenticatedUserId();
+
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name")
+    .eq("type", type)
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+    .order("name");
+
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
+===== grep: uso de watch/decimals/currency em todo o projeto =====
+src/components/molecules/form-field.tsx:20:  decimals?: number;
+src/components/molecules/form-field.tsx:31:  decimals,
+src/components/molecules/form-field.tsx:56:              if (decimals !== undefined) {
+src/components/molecules/form-field.tsx:57:                onChange(sanitizeDecimalInput(text, decimals));
+src/components/molecules/form-field.tsx:95:function sanitizeDecimalInput(text: string, decimals: number): string {
+src/components/molecules/form-field.tsx:99:  return `${intPart}.${decPart.slice(0, decimals)}`;
+src/components/molecules/currency-picker.tsx:20:  onCurrencyChange?: (currencyCode: string) => void;
+src/components/molecules/currency-picker.tsx:28:  onCurrencyChange,
+src/components/molecules/currency-picker.tsx:49:                onCurrencyChange?.(nextValue);
+src/components/organisms/transaction-form.tsx:8:import { getCurrencyDecimals } from "@/lib/currency";
+src/components/organisms/transaction-form.tsx:36:  const currency = watch("currency" as Path<T>);
+src/components/organisms/transaction-form.tsx:37:  const decimals = currency ? getCurrencyDecimals(currency) : 2;
+src/components/organisms/transaction-form.tsx:65:        decimals={decimals}
+src/lib/currency.ts:1:export function getCurrencyDecimals(currencyCode: string): number {
+src/lib/currency.ts:10:export function truncateToDecimals(value: number, decimals: number): number {
+src/lib/currency.ts:11:  const factor = 10 ** decimals;
+
+===== grep: currency/category_id nos services de incomings/expenses =====
+src/services/incomings.ts:24:    .select("id, origin, value, reference, category_id, currency")
+src/services/incomings.ts:36:): Promise<Pick<Incoming, "id" | "value" | "origin" | "currency">[]> {
+src/services/incomings.ts:40:    .select("id, value, origin, currency")
+src/services/incomings.ts:72:      category_id: formData.category_id,
+src/services/incomings.ts:73:      currency: formData.currency,
+src/services/expenses.ts:17:  Pick<Expense, "id" | "value" | "destination" | "currency" | "category_id">[]
+src/services/expenses.ts:22:    .select("id, value, destination, currency, category_id")
+src/services/expenses.ts:33:    .select("id, destination, value, reference, category_id, currency")
+src/services/expenses.ts:66:      currency: formData.currency,
+src/services/expenses.ts:67:      category_id: formData.category_id,
+
+===== grep: currency/categoryId nos types =====
+src/types/incomings.types.ts:8:  category_id: string | null;
+src/types/incomings.types.ts:9:  currency: string;
+src/types/incomings.types.ts:14:  "value" | "origin" | "reference" | "category_id" | "currency"
+src/types/incomings.types.ts:18:  "id" | "value" | "origin" | "reference" | "category_id" | "currency"
+src/types/expenses.types.ts:9:  category_id: string | null;
+src/types/expenses.types.ts:10:  currency: string;
+src/types/expenses.types.ts:15:  "value" | "destination" | "reference" | "category_id" | "currency"
+src/types/expenses.types.ts:19:  "id" | "value" | "destination" | "reference" | "category_id" | "currency"
