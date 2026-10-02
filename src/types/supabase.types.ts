@@ -146,6 +146,16 @@ export type Database = {
       }
     }
     Views: {
+      currency_totals: {
+        Row: {
+          currency: string | null
+          expense_value: number | null
+          incoming_value: number | null
+          net_income: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       incomings_expenses_transactions: {
         Row: {
           category_id: string | null

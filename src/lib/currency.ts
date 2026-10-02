@@ -19,6 +19,20 @@ export function getCurrencyDecimals(currencyCode: string): number {
   return maximumFractionDigits ?? 2;
 }
 
+export function convertToDisplayCurrency(
+  amount: number,
+  fromCurrency: string,
+  displayCurrency: string,
+  rates: Record<string, number>,
+): number | null {
+  if (fromCurrency === displayCurrency) return amount;
+
+  const rate = rates[fromCurrency];
+  if (!rate) return null;
+
+  return amount / rate;
+}
+
 export function applyCurrencyMask(rawText: string, decimals: number): string {
   const digits = rawText.replace(/\D/g, "");
   if (!digits) return "";

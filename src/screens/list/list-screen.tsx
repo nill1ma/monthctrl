@@ -1,262 +1,197 @@
-import { Spacing } from "@/constants/theme";
-import { useLocale } from "@/context/locale";
+import { CurrencySelect } from "@/components/molecules/currency-select";
+import { Colors, Spacing } from "@/constants/theme";
+import { useCurrencyTotals } from "@/hooks/use-currency-totals";
+import { useExchangeRates } from "@/hooks/use-exchange-rates";
 import { useListTransactions } from "@/hooks/use-list-transactions";
-import { useTheme } from "@/hooks/use-theme";
-import { groupByReference } from "@/utils/group-transactions";
+import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
+import {
+  getConvertedBalance,
+  groupTransactionsByReference,
+} from "@/lib/transactions";
+import { logout } from "@/services/auth";
 import { Link } from "expo-router";
-import { useMemo, useRef } from "react";
+import { useState } from "react";
 import { useIntl } from "react-intl";
 import {
   ActivityIndicator,
   FlatList,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
+  TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
 
 export default function List() {
-  const { formatMessage, formatNumber } = useIntl();
-  const { locale } = useLocale();
-  const colors = useTheme();
-  const {
-    references,
-    transactions,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useListTransactions();
+  const [loading, setLoading] = useState(false);
+  const [convertEnabled, setConvertEnabled] = useState(false);
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const { formatMessage } = useIntl();
 
-  const grouped = useMemo(() => groupByReference(transactions), [transactions]);
+  const { transactions, isLoading, fetchNextPage, hasNextPage } =
+    useListTransactions();
+  const { data: currencyTotals = [] } = useCurrencyTotals();
 
-  const onEndReachedCalledDuringMomentum = useRef(true);
-
-  const totalIncoming = transactions.reduce(
-    (sum, t) => sum + t.incoming_value,
-    0,
+  const availableCurrencies = currencyTotals.map((t) => t.currency);
+  const [displayCurrency, setDisplayCurrency] = useState(
+    availableCurrencies[0] ?? "BRL",
   );
-  const totalExpense = transactions.reduce(
-    (sum, t) => sum + t.expense_value,
-    0,
+
+  const otherCurrencies = availableCurrencies.filter(
+    (c) => c !== displayCurrency,
   );
-  const totalNet = transactions.reduce((sum, t) => sum + t.net_income, 0);
+  const { data: rates, isLoading: ratesLoading } = useExchangeRates(
+    displayCurrency,
+    convertEnabled ? otherCurrencies : [],
+  );
 
-  const getCurrency = () => {
-    switch (locale) {
-      case "es-ES":
-        return "EUR";
-      case "en":
-        return "USD";
-      default:
-        return "BRL";
-    }
-  };
+  const referenceGroups = groupTransactionsByReference(transactions);
+  const hasMultipleCurrencies = availableCurrencies.length > 1;
 
-  const formatCurrency = (value: number) => {
-    return formatNumber(value, {
-      style: "currency",
-      currency: getCurrency(),
-    });
-  };
+  async function handleSubmit() {
+    setLoading(true);
+    await logout();
+    setLoading(false);
+  }
 
   return (
-    <View
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
-    >
-      {/* Header com botão de logout */}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View
-        style={StyleSheet.flatten([
-          styles.header,
-          { borderBottomColor: colors.backgroundElement },
-        ])}
+        style={[styles.header, { borderBottomColor: colors.backgroundElement }]}
       >
-        <Text
-          style={StyleSheet.flatten([
-            styles.headerTitle,
-            { color: colors.text },
-          ])}
-        >
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
           {formatMessage({ id: "list.title" })}
         </Text>
-      </View>
-
-      {/* Resumo */}
-      <View
-        style={StyleSheet.flatten([
-          styles.summary,
-          { backgroundColor: colors.backgroundElement },
-        ])}
-      >
-        <View style={styles.summaryItem}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.summaryLabel,
-              { color: colors.textSecondary },
-            ])}
-          >
-            {formatMessage({ id: "list.incoming" })}
-          </Text>
-          <Text
-            style={StyleSheet.flatten([
-              styles.summaryValue,
-              { color: "#10B981" },
-            ])}
-          >
-            {formatCurrency(totalIncoming)}
-          </Text>
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={loading}
+          style={styles.logoutButton}
         >
-          <View style={styles.summaryItem}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.summaryLabel,
-                { color: colors.textSecondary },
-              ])}
-            >
-              {formatMessage({ id: "list.expense" })}
-            </Text>
-            <Text
-              style={StyleSheet.flatten([
-                styles.summaryValue,
-                { color: "#EF4444" },
-              ])}
-            >
-              {formatCurrency(totalExpense)}
-            </Text>
-          </View>
-          <View style={styles.summaryItem}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.summaryLabel,
-                { color: colors.textSecondary },
-              ])}
-            >
-              {formatMessage({ id: "list.balance" })}
-            </Text>
-            <Text
-              style={StyleSheet.flatten([
-                styles.summaryValue,
-                { color: totalNet >= 0 ? "#10B981" : "#EF4444" },
-              ])}
-            >
-              {formatCurrency(totalNet)}
-            </Text>
-          </View>
-        </View>
+          <Text style={styles.logoutButtonText}>
+            {formatMessage({ id: "list.logout" })}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Lista de transações */}
+      {hasMultipleCurrencies && (
+        <View
+          style={[
+            styles.convertBar,
+            { backgroundColor: colors.backgroundElement },
+          ]}
+        >
+          <View style={styles.convertToggleRow}>
+            <Text style={[styles.convertLabel, { color: colors.text }]}>
+              {formatMessage({ id: "list.convert.toggle" })}
+            </Text>
+            <Switch value={convertEnabled} onValueChange={setConvertEnabled} />
+          </View>
+          {convertEnabled && (
+            <CurrencySelect
+              value={displayCurrency}
+              onChange={setDisplayCurrency}
+              options={availableCurrencies}
+            />
+          )}
+        </View>
+      )}
+
       <FlatList
-        data={grouped}
-        keyExtractor={(item) => item.reference}
+        data={referenceGroups}
+        keyExtractor={(group) => group.reference}
         contentContainerStyle={styles.listContent}
-        // onMomentumScrollBegin={() => {
-        //   onEndReachedCalledDuringMomentum.current = false;
-        // }}
-        onScrollBeginDrag={() => {
-          onEndReachedCalledDuringMomentum.current = false;
+        renderItem={({ item: group }) => {
+          const converted =
+            convertEnabled && rates
+              ? getConvertedBalance(group, displayCurrency, rates)
+              : null;
+
+          return (
+            <Link href={`/details/${group.reference}`} asChild>
+              <Pressable
+                style={StyleSheet.flatten([
+                  styles.row,
+                  {
+                    backgroundColor: colors.backgroundElement,
+                    borderBottomColor: colors.backgroundSelected,
+                  },
+                ])}
+              >
+                <View style={styles.rowHeader}>
+                  <Text style={[styles.reference, { color: colors.text }]}>
+                    {group.reference}
+                  </Text>
+                </View>
+
+                {convertEnabled ? (
+                  ratesLoading || !converted ? (
+                    <ActivityIndicator size="small" color={colors.text} />
+                  ) : (
+                    <Text
+                      style={[
+                        styles.netIncome,
+                        { color: converted.net >= 0 ? "#10B981" : "#EF4444" },
+                      ]}
+                    >
+                      {formatMessage({ id: "list.balance" })}: ≈{" "}
+                      {formatCurrency(converted.net, displayCurrency)}
+                    </Text>
+                  )
+                ) : (
+                  group.currencies.map((entry) => (
+                    <View key={entry.currency} style={styles.currencyRow}>
+                      <Text
+                        style={[
+                          styles.currencyLabel,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
+                        {getCurrencyFlag(entry.currency)} {entry.currency}
+                      </Text>
+                      <View style={styles.rowDetails}>
+                        <Text
+                          style={[styles.detailValue, { color: "#10B981" }]}
+                        >
+                          {formatCurrency(entry.incoming_value, entry.currency)}
+                        </Text>
+                        <Text
+                          style={[styles.detailValue, { color: "#EF4444" }]}
+                        >
+                          {formatCurrency(entry.expense_value, entry.currency)}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.detailValue,
+                            {
+                              color:
+                                entry.net_income >= 0 ? "#10B981" : "#EF4444",
+                              fontWeight: "700",
+                            },
+                          ]}
+                        >
+                          {formatCurrency(entry.net_income, entry.currency)}
+                        </Text>
+                      </View>
+                    </View>
+                  ))
+                )}
+              </Pressable>
+            </Link>
+          );
         }}
         onEndReached={() => {
-          if (
-            hasNextPage &&
-            !isFetchingNextPage &&
-            !onEndReachedCalledDuringMomentum.current
-          ) {
-            fetchNextPage();
-            onEndReachedCalledDuringMomentum.current = true;
-          }
+          if (hasNextPage) fetchNextPage();
         }}
         onEndReachedThreshold={0.5}
-        renderItem={({ item }) => (
-          <Link href={`/details/${item.reference}`} asChild>
-            <Pressable
-              style={StyleSheet.flatten([
-                styles.row,
-                {
-                  backgroundColor: colors.backgroundElement,
-                  borderBottomColor: colors.backgroundSelected,
-                },
-              ])}
-            >
-              <View style={styles.rowHeader}>
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.reference,
-                    { color: colors.text },
-                  ])}
-                >
-                  {item.reference}
-                </Text>
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.netIncome,
-                    { color: item.net_income >= 0 ? "#10B981" : "#EF4444" },
-                  ])}
-                >
-                  {formatCurrency(item.net_income)}
-                </Text>
-              </View>
-              <View style={styles.rowDetails}>
-                <View style={styles.detailItem}>
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.detailLabel,
-                      { color: colors.textSecondary },
-                    ])}
-                  >
-                    {formatMessage({ id: "list.incoming" })}
-                  </Text>
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.detailValue,
-                      { color: "#10B981" },
-                    ])}
-                  >
-                    {formatCurrency(item.incoming_value)}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.detailLabel,
-                      { color: colors.textSecondary },
-                    ])}
-                  >
-                    {formatMessage({ id: "list.expense" })}
-                  </Text>
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.detailValue,
-                      { color: "#EF4444" },
-                    ])}
-                  >
-                    {formatCurrency(item.expense_value)}
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
-          </Link>
-        )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             {isLoading ? (
               <ActivityIndicator size="large" color={colors.text} />
             ) : (
-              <Text
-                style={StyleSheet.flatten([
-                  styles.emptyText,
-                  { color: colors.textSecondary },
-                ])}
-              >
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
                 {formatMessage({ id: "list.empty" })}
               </Text>
             )}
@@ -275,9 +210,7 @@ export default function List() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -286,89 +219,52 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
     borderBottomWidth: 1,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
+  headerTitle: { fontSize: 24, fontWeight: "bold" },
   logoutButton: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
     backgroundColor: "#EF4444",
     borderRadius: 8,
   },
-  logoutButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  summary: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: Spacing.four,
+  logoutButtonText: { color: "white", fontWeight: "600", fontSize: 14 },
+  convertBar: {
     marginHorizontal: Spacing.three,
     marginTop: Spacing.three,
+    padding: Spacing.three,
     borderRadius: 12,
+    gap: Spacing.two,
   },
-  summaryItem: {
+  convertToggleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
-  summaryLabel: {
-    fontSize: 12,
-    marginBottom: Spacing.one,
-  },
-  summaryValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  listContent: {
-    padding: Spacing.three,
-  },
+  convertLabel: { fontSize: 14, fontWeight: "500" },
+  listContent: { padding: Spacing.three },
   row: {
     padding: Spacing.four,
     borderRadius: 12,
     marginBottom: Spacing.three,
     borderBottomWidth: 1,
+    gap: Spacing.two,
   },
   rowHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.three,
   },
-  reference: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  netIncome: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  rowDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  detailItem: {
-    alignItems: "center",
-  },
-  detailLabel: {
-    fontSize: 12,
-    marginBottom: Spacing.half,
-  },
-  detailValue: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  reference: { fontSize: 16, fontWeight: "600" },
+  netIncome: { fontSize: 18, fontWeight: "bold" },
+  currencyRow: { gap: Spacing.half },
+  currencyLabel: { fontSize: 12 },
+  rowDetails: { flexDirection: "row", justifyContent: "space-between" },
+  detailValue: { fontSize: 14, fontWeight: "600" },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: Spacing.six,
   },
-  emptyText: {
-    fontSize: 16,
-  },
-  loadingFooter: {
-    paddingVertical: Spacing.four,
-    alignItems: "center",
-  },
+  emptyText: { fontSize: 16 },
+  loadingFooter: { paddingVertical: Spacing.four, alignItems: "center" },
 });

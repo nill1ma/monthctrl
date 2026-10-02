@@ -64,4 +64,6 @@ export const en: Record<string, string> = {
   "form.category": "Category",
   "form.saving": "Saving...",
   "form.save": "Save",
+
+  "list.convert.toggle": "Convert currencies",
 };

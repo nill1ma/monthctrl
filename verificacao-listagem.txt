@@ -1,0 +1,209 @@
+===== lib/currency.ts =====
+const CURRENCY_FLAGS: Record<string, string> = {
+  CAD: "🇨🇦",
+  EUR: "🇪🇺",
+  GBP: "🇬🇧",
+  USD: "🇺🇸",
+  BRL: "🇧🇷",
+};
+
+export function getCurrencyFlag(currencyCode: string): string {
+  return CURRENCY_FLAGS[currencyCode] ?? "💱";
+}
+
+export function getCurrencyDecimals(currencyCode: string): number {
+  const { maximumFractionDigits } = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+  }).resolvedOptions();
+
+  return maximumFractionDigits ?? 2;
+}
+
+export function applyCurrencyMask(rawText: string, decimals: number): string {
+  const digits = rawText.replace(/\D/g, "");
+  if (!digits) return "";
+
+  if (decimals === 0) {
+    return String(Number(digits));
+  }
+
+  const padded = digits.padStart(decimals + 1, "0");
+  const intPart = padded.slice(0, -decimals).replace(/^0+(?=\d)/, "");
+  const decPart = padded.slice(-decimals);
+
+  return `${intPart}.${decPart}`;
+}
+
+export function formatCurrency(
+  value: number,
+  currencyCode: string,
+  locale = "en-US",
+): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currencyCode,
+  }).format(value);
+}
+
+===== lib/transactions.ts =====
+import { convertToDisplayCurrency } from "@/lib/currency";
+import { IncomingsExpensesTransaction } from "@/types/list.types";
+
+export type ReferenceGroup = {
+  reference: string;
+  currencies: Pick<
+    IncomingsExpensesTransaction,
+    "currency" | "incoming_value" | "expense_value" | "net_income"
+  >[];
+};
+
+export function groupTransactionsByReference(
+  rows: IncomingsExpensesTransaction[],
+): ReferenceGroup[] {
+  const map = new Map<string, ReferenceGroup["currencies"]>();
+
+  for (const row of rows) {
+    const existing = map.get(row.reference) ?? [];
+    existing.push({
+      currency: row.currency,
+      incoming_value: row.incoming_value,
+      expense_value: row.expense_value,
+      net_income: row.net_income,
+    });
+    map.set(row.reference, existing);
+  }
+
+  return Array.from(map.entries()).map(([reference, currencies]) => ({
+    reference,
+    currencies,
+  }));
+}
+
+export function getConvertedBalance(
+  group: ReferenceGroup,
+  displayCurrency: string,
+  rates: Record<string, number>,
+): { incoming: number; expense: number; net: number } | null {
+  let incoming = 0;
+  let expense = 0;
+
+  for (const entry of group.currencies) {
+    const incomingConverted = convertToDisplayCurrency(
+      entry.incoming_value,
+      entry.currency,
+      displayCurrency,
+      rates,
+    );
+    const expenseConverted = convertToDisplayCurrency(
+      entry.expense_value,
+      entry.currency,
+      displayCurrency,
+      rates,
+    );
+
+    if (incomingConverted === null || expenseConverted === null) return null;
+
+    incoming += incomingConverted;
+    expense += expenseConverted;
+  }
+
+  return { incoming, expense, net: incoming - expense };
+}
+
+===== types/list.types.ts =====
+type UUID = string;
+
+export interface IncomingsExpensesTransaction {
+  id: string;
+  reference: string;
+  currency: string;
+  incoming_value: number;
+  expense_value: number;
+  net_income: number;
+}
+export type IncomingsExpensesTransactionResponse = {
+  data: IncomingsExpensesTransaction[];
+  totalElements: number;
+};
+
+===== services/list.ts =====
+import { supabase } from "@/lib/supabase";
+
+const PAGE_SIZE = 5;
+
+type DistinctReferencesResponse = {
+  references: string[];
+  totalElements: number;
+};
+
+export async function getDistinctReferences(
+  page: number,
+  userId: string,
+  pageSize: number = PAGE_SIZE,
+): Promise<DistinctReferencesResponse> {
+  const offset = (page - 1) * pageSize;
+
+  const { data, error } = await supabase.rpc("get_distinct_references", {
+    p_user_id: userId,
+    p_limit: pageSize,
+    p_offset: offset,
+  });
+
+  if (error) throw error;
+
+  const totalElements = Number(data?.[0]?.total_count ?? 0);
+  const references = (data ?? [])
+    .map((item) => item.reference)
+    .filter((ref): ref is string => ref !== null);
+
+  return { references, totalElements };
+}
+
+export type TransactionRow = {
+  id: string;
+  reference: string;
+  currency: string;
+  incoming_value: number;
+  expense_value: number;
+  net_income: number;
+};
+
+export async function getTransactionsByReferences(
+  references: string[],
+  userId: string,
+): Promise<TransactionRow[]> {
+  if (references.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("incomings_expenses_transactions_grouped")
+    .select("*")
+    .eq("user_id", userId)
+    .in("reference", references);
+
+  if (error) throw error;
+
+  return (data ?? []).map((item) => ({
+    id: `${item.reference}-${item.currency}`,
+    reference: item.reference!,
+    currency: item.currency!,
+    incoming_value: item.incoming_value ?? 0,
+    expense_value: item.expense_value ?? 0,
+    net_income: item.net_income ?? 0,
+  }));
+}
+
+===== services/currency-totals.ts =====
+NÃO ENCONTRADO
+
+===== services/exchange-rates.ts =====
+NÃO ENCONTRADO
+
+===== hooks/use-currency-totals.ts =====
+NÃO ENCONTRADO
+
+===== hooks/use-exchange-rates.ts =====
+NÃO ENCONTRADO
+
+===== molecules/currency-select.tsx =====
+NÃO ENCONTRADO

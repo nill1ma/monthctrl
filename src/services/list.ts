@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import * as Crypto from "expo-crypto";
 
 const PAGE_SIZE = 5;
 
@@ -55,11 +54,11 @@ export async function getTransactionsByReferences(
   if (error) throw error;
 
   return (data ?? []).map((item) => ({
-    id: Crypto.randomUUID(),
+    id: `${item.reference}-${item.currency}`,
     reference: item.reference!,
-    currency: item.currency ?? "BRL",
-    incoming_value: item.incoming_value ?? 0,
-    expense_value: item.expense_value ?? 0,
-    net_income: item.net_income ?? 0,
+    currency: item.currency!,
+    incoming_value: Number(item.incoming_value ?? 0),
+    expense_value: Number(item.expense_value ?? 0),
+    net_income: Number(item.net_income ?? 0),
   }));
 }
