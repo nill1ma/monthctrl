@@ -1,7 +1,5 @@
 import { Colors, Spacing } from "@/constants/theme";
-import { login } from "@/services/auth";
 import { useState } from "react";
-import { useIntl } from "react-intl";
 import {
   Button,
   StyleSheet,
@@ -11,8 +9,25 @@ import {
   View,
 } from "react-native";
 
-export default function LoginScreen() {
-  const { formatMessage } = useIntl();
+type AuthFormProps = {
+  title: string;
+  emailPlaceholder: string;
+  passwordPlaceholder: string;
+  submitLabel: string;
+  submitLabelLoading: string;
+  onSubmit: (email: string, password: string) => Promise<{ error?: string }>;
+  children?: React.ReactNode;
+};
+
+export function AuthForm({
+  title,
+  emailPlaceholder,
+  passwordPlaceholder,
+  submitLabel,
+  submitLabelLoading,
+  onSubmit,
+  children,
+}: AuthFormProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const [email, setEmail] = useState("");
@@ -23,7 +38,7 @@ export default function LoginScreen() {
   async function handleSubmit() {
     setError(null);
     setLoading(true);
-    const result = await login(email, password);
+    const result = await onSubmit(email, password);
     setLoading(false);
 
     if (result.error) {
@@ -39,7 +54,7 @@ export default function LoginScreen() {
       ])}
     >
       <Text style={StyleSheet.flatten([styles.title, { color: colors.text }])}>
-        {formatMessage({ id: "login.welcome" })}
+        {title}
       </Text>
 
       <TextInput
@@ -51,7 +66,7 @@ export default function LoginScreen() {
             color: colors.text,
           },
         ])}
-        placeholder={formatMessage({ id: "login.emailPlaceholder" })}
+        placeholder={emailPlaceholder}
         placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
         keyboardType="email-address"
@@ -68,7 +83,7 @@ export default function LoginScreen() {
             color: colors.text,
           },
         ])}
-        placeholder={formatMessage({ id: "login.passwordPlaceholder" })}
+        placeholder={passwordPlaceholder}
         placeholderTextColor={colors.textSecondary}
         secureTextEntry
         value={password}
@@ -82,25 +97,32 @@ export default function LoginScreen() {
       )}
 
       <Button
-        title={
-          loading
-            ? formatMessage({ id: "login.loggingIn" })
-            : formatMessage({ id: "login.loginButton" })
-        }
+        title={loading ? submitLabelLoading : submitLabel}
         onPress={handleSubmit}
         disabled={loading}
         color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}
       />
+      <Text
+        style={StyleSheet.flatten([
+          styles.login_signup_link,
+          {
+            backgroundColor: colors.background,
+            color: colors.text,
+          },
+        ])}
+      >
+        {children}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: Spacing.six,
+  login_signup_link: {
+    marginTop: Spacing.two,
+    gap: Spacing.five,
   },
+  container: { flex: 1, justifyContent: "center", padding: Spacing.six },
   title: {
     fontSize: 32,
     fontWeight: "bold",
@@ -115,9 +137,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
   },
-  error: {
-    fontSize: 14,
-    marginTop: Spacing.two,
-    textAlign: "center",
-  },
+  error: { fontSize: 14, marginTop: Spacing.two, textAlign: "center" },
 });

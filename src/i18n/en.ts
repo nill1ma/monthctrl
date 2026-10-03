@@ -15,6 +15,14 @@ export const en: Record<string, string> = {
   "login.registerLink": "Register",
   "login.createAccountButton": "Create",
 
+  "signup.welcome": "Create your account",
+  "signup.creatingAccount": "Creating account...",
+
+  "login.signupLink": "Sign up",
+  "login.signupLink.message": "Create a new account?",
+  "signup.alreadyHaveAccount": "Already have an account?",
+  "signup.loginLink": "Login",
+
   "create.update.incomings.origin": "Origin",
   "create.update.expenses.destination": "Destination",
   "create.update.reference": "Reference",

@@ -66,4 +66,12 @@ export const es: Record<string, string> = {
   "form.save": "Guardar",
 
   "list.convert.toggle": "Convertir monedas",
+
+  "signup.welcome": "Crear tu cuenta",
+  "signup.creatingAccount": "Creando cuenta...",
+
+  "login.signupLink": "Registrarse",
+  "login.signupLink.message": "Crear una nueva cuenta",
+  "signup.alreadyHaveAccount": "¿Ya tienes una cuenta?",
+  "signup.loginLink": "Iniciar sesión",
 };
