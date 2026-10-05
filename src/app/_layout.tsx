@@ -1,3 +1,4 @@
+import { GlobalThemeControl } from "@/components/organisms/global-theme-control";
 import { AuthProvider } from "@/context/auth";
 import { I18Provider } from "@/context/intl-provider";
 import { LocaleProvider } from "@/context/locale";
@@ -13,6 +14,7 @@ import {
 } from "expo-router/react-navigation";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { View } from "react-native";
 
 function NavigationThemeWrapper({ children }: { children: React.ReactNode }) {
   const { scheme } = useAppTheme();

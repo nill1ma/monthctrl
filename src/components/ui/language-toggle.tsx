@@ -7,7 +7,7 @@ export function LanguageToggle() {
   const colors = useTheme();
 
   function toggle() {
-    const locales: Array<"en" | "es-ES" | "pt-BR"> = ["en", "es-ES", "pt-BR"];
+    const locales: ("en" | "es-ES" | "pt-BR")[] = ["en", "es-ES", "pt-BR"];
     const currentIndex = locales.indexOf(locale);
     const nextIndex = (currentIndex + 1) % locales.length;
     setLocale(locales[nextIndex]);
