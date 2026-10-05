@@ -35,7 +35,8 @@
           "imageWidth": 76
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,

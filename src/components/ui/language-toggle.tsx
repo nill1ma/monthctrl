@@ -7,17 +7,29 @@ export function LanguageToggle() {
   const colors = useTheme();
 
   function toggle() {
-    setLocale(locale === "en" ? "es-ES" : "en");
+    const locales: Array<"en" | "es-ES" | "pt-BR"> = ["en", "es-ES", "pt-BR"];
+    const currentIndex = locales.indexOf(locale);
+    const nextIndex = (currentIndex + 1) % locales.length;
+    setLocale(locales[nextIndex]);
   }
+
+  const getFlag = () => {
+    switch (locale) {
+      case "en":
+        return "🇬🇧 English";
+      case "es-ES":
+        return "🇪🇸 Español";
+      case "pt-BR":
+        return "🇧🇷 Português";
+    }
+  };
 
   return (
     <Pressable
       onPress={toggle}
       style={[styles.button, { backgroundColor: colors.backgroundElement }]}
     >
-      <Text style={{ color: colors.text }}>
-        {locale === "en" ? "🇪🇸 Español" : "🇬🇧 English"}
-      </Text>
+      <Text style={{ color: colors.text }}>{getFlag()}</Text>
     </Pressable>
   );
 }

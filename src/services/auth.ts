@@ -40,3 +40,15 @@ export async function logout(): Promise<AuthResult> {
 
   return {};
 }
+
+export async function signInWithGoogle(): Promise<AuthResult> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return {};
+}

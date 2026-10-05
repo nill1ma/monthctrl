@@ -74,4 +74,13 @@ export const en: Record<string, string> = {
   "form.save": "Save",
 
   "list.convert.toggle": "Convert currencies",
+
+  "login.google": "Continue with Google",
+
+  "settings.open": "Open settings",
+  "settings.openHint": "Opens theme and language preferences",
+  "settings.title": "Preferences",
+  "settings.theme": "Theme",
+  "settings.language": "Language",
+  "settings.close": "Close",
 };

@@ -74,4 +74,13 @@ export const es: Record<string, string> = {
   "login.signupLink.message": "Crear una nueva cuenta",
   "signup.alreadyHaveAccount": "¿Ya tienes una cuenta?",
   "signup.loginLink": "Iniciar sesión",
+
+  "login.google": "Continuar con Google",
+
+  "settings.open": "Abrir configuración",
+  "settings.openHint": "Abre las preferencias de tema e idioma",
+  "settings.title": "Preferencias",
+  "settings.theme": "Tema",
+  "settings.language": "Idioma",
+  "settings.close": "Cerrar",
 };

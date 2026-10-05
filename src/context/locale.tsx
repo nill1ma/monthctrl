@@ -1,7 +1,7 @@
 import * as Localization from "expo-localization";
 import { createContext, useContext, useState } from "react";
 
-export type Locale = "en" | "es-ES";
+export type Locale = "en" | "es-ES" | "pt-BR";
 
 type LocaleContextType = {
   locale: Locale;
@@ -13,7 +13,9 @@ const LocaleContext = createContext<LocaleContextType | null>(null);
 function detectLocale(): Locale {
   try {
     const deviceLanguage = Localization.getLocales()[0]?.languageCode;
-    return deviceLanguage === "es" ? "es-ES" : "en";
+    if (deviceLanguage === "es") return "es-ES";
+    if (deviceLanguage === "pt") return "pt-BR";
+    return "en";
   } catch (error) {
     console.error("Error detecting locale:", error);
     return "en";
