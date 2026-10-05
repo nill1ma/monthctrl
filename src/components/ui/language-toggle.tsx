@@ -1,44 +1,40 @@
+import { Picker } from "@react-native-picker/picker";
+import { StyleSheet, View } from "react-native";
+
 import { useLocale } from "@/context/locale";
 import { useTheme } from "@/hooks/use-theme";
-import { Pressable, StyleSheet, Text } from "react-native";
+
+const LANGUAGE_OPTIONS = [
+  { value: "en", label: "🇬🇧 English" },
+  { value: "es-ES", label: "🇪🇸 Español" },
+  { value: "pt-BR", label: "🇧🇷 Português" },
+] as const;
 
 export function LanguageToggle() {
   const { locale, setLocale } = useLocale();
   const colors = useTheme();
 
-  function toggle() {
-    const locales: ("en" | "es-ES" | "pt-BR")[] = ["en", "es-ES", "pt-BR"];
-    const currentIndex = locales.indexOf(locale);
-    const nextIndex = (currentIndex + 1) % locales.length;
-    setLocale(locales[nextIndex]);
-  }
-
-  const getFlag = () => {
-    switch (locale) {
-      case "en":
-        return "🇬🇧 English";
-      case "es-ES":
-        return "🇪🇸 Español";
-      case "pt-BR":
-        return "🇧🇷 Português";
-    }
-  };
-
   return (
-    <Pressable
-      onPress={toggle}
-      style={[styles.button, { backgroundColor: colors.backgroundElement }]}
+    <View
+      style={[styles.wrapper, { backgroundColor: colors.backgroundElement }]}
     >
-      <Text style={{ color: colors.text }}>{getFlag()}</Text>
-    </Pressable>
+      <Picker
+        selectedValue={locale}
+        onValueChange={setLocale}
+        style={{ color: colors.text }}
+      >
+        {LANGUAGE_OPTIONS.map((option) => (
+          <Picker.Item
+            key={option.value}
+            label={option.label}
+            value={option.value}
+          />
+        ))}
+      </Picker>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
+  wrapper: { borderRadius: 8, overflow: "hidden", minWidth: 140 },
 });

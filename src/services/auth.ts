@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 type AuthResult = { error?: string };
 
@@ -31,24 +32,33 @@ export async function signup(
   return {};
 }
 
+// export async function logout(): Promise<AuthResult> {
+//   const { error } = await supabase.auth.signOut();
+
+//   if (error) {
+//     return { error: error.message };
+//   }
+
+//   return {};
+// }
+
 export async function logout(): Promise<AuthResult> {
+  await GoogleSignin.signOut();
   const { error } = await supabase.auth.signOut();
-
-  if (error) {
-    return { error: error.message };
-  }
-
+  if (error) return { error: error.message };
   return {};
 }
 
 export async function signInWithGoogle(): Promise<AuthResult> {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  });
-
-  if (error) {
-    return { error: error.message };
+  await GoogleSignin.hasPlayServices();
+  const response = await GoogleSignin.signIn();
+  if (!response.data?.idToken) {
+    return { error: "No ID token returned" };
   }
-
+  const { error } = await supabase.auth.signInWithIdToken({
+    provider: "google",
+    token: response.data.idToken,
+  });
+  if (error) return { error: error.message };
   return {};
 }
