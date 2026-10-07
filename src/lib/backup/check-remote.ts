@@ -14,13 +14,6 @@ export async function isRemoteBackupNewer(
 
   const remoteTimestamp = data[0].updated_at ?? data[0].created_at ?? null;
 
-  console.log("check-remote: lastSyncedAt =", lastSyncedAt);
-  console.log("check-remote: remoteTimestamp =", remoteTimestamp);
-  console.log(
-    "check-remote: result =",
-    !lastSyncedAt || remoteTimestamp! > lastSyncedAt,
-  );
-
   if (!remoteTimestamp) return { newer: false, remoteTimestamp: null };
 
   const newer = !lastSyncedAt || remoteTimestamp > lastSyncedAt;

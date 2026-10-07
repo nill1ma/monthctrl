@@ -10,7 +10,7 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
 
 type TransactionType = "incomings" | "expenses";
@@ -95,7 +95,7 @@ export default function DetailsScreen() {
   const incomingSections = groupByCurrency(
     (incomings ?? []).map((item) => ({
       id: item.id,
-      value: item.value,
+      value: item.value ?? 0,
       currency: item.currency,
       label: item.origin,
       type: "incomings" as const,

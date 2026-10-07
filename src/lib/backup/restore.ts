@@ -50,76 +50,11 @@ function blobToUint8Array(blob: Blob): Promise<Uint8Array> {
   });
 }
 
-// export function restoreSnapshotToLocal(snapshot: BackupSnapshot): void {
-//   const db = getDatabase();
-
-//   db.withTransactionSync(() => {
-//     for (const incoming of snapshot.incomings) {
-//       console.log("restore: inserting incoming", incoming.id);
-//       db.runSync(
-//         `INSERT OR REPLACE INTO incomings
-//           (id, user_id, reference, value, origin, currency, category_id, created_at, updated_at, deleted_at)
-//          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-//         [
-//           incoming.id,
-//           incoming.user_id,
-//           incoming.reference,
-//           incoming.value,
-//           incoming.origin,
-//           incoming.currency,
-//           incoming.category_id,
-//           incoming.created_at,
-//           incoming.updated_at,
-//           incoming.deleted_at,
-//         ],
-//       );
-//     }
-
-//     for (const expense of snapshot.expenses) {
-//       console.log("restore: inserting expense", expense.id);
-//       db.runSync(
-//         `INSERT OR REPLACE INTO expenses
-//           (id, user_id, reference, value, destination, currency, category_id, due_date, payment_day, created_at, updated_at, deleted_at)
-//          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-//         [
-//           expense.id,
-//           expense.user_id,
-//           expense.reference,
-//           expense.value,
-//           expense.destination,
-//           expense.currency,
-//           expense.category_id,
-//           expense.due_date,
-//           expense.payment_day,
-//           expense.created_at,
-//           expense.updated_at,
-//           expense.deleted_at,
-//         ],
-//       );
-//     }
-//   });
-
-//   console.log("restore: transaction complete");
-// }
-
-// src/lib/backup/restore.ts — após a transação
 export function restoreSnapshotToLocal(snapshot: BackupSnapshot): void {
   const db = getDatabase();
 
   db.withTransactionSync(() => {
     for (const incoming of snapshot.incomings) {
-      console.log(
-        "restore: incoming value type =",
-        typeof incoming.value,
-        "value =",
-        incoming.value,
-      );
-      console.log(
-        "restore: inserting incoming",
-        incoming.id,
-        "value:",
-        incoming.value,
-      );
       db.runSync(
         `INSERT OR REPLACE INTO incomings
           (id, user_id, reference, value, origin, currency, category_id, created_at, updated_at, deleted_at)
@@ -161,13 +96,4 @@ export function restoreSnapshotToLocal(snapshot: BackupSnapshot): void {
       );
     }
   });
-
-  // confirma o que realmente ficou no banco após a transação
-  const check = db.getAllSync<{ id: string; value: number; origin: string }>(
-    `SELECT id, value, origin FROM incomings WHERE deleted_at IS NULL`,
-  );
-  console.log(
-    "restore: incomings in db after restore =",
-    JSON.stringify(check),
-  );
 }

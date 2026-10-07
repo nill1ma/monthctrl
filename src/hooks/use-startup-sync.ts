@@ -21,23 +21,17 @@ export function useStartupSync() {
     syncPromise = (async () => {
       try {
         const userId = session!.user.id;
-        console.log("startup sync: starting for", userId);
 
         const { newer, remoteTimestamp } = await isRemoteBackupNewer(userId);
-        console.log("startup sync: newer =", newer);
 
         if (!newer) return;
 
-        console.log("startup sync: restoring...");
         await restoreFromCloud(userId);
-        console.log("startup sync: restore complete");
 
         setMeta("last_synced_at", remoteTimestamp!);
         await queryClient.resetQueries();
         router.replace("/");
-        console.log("startup sync: navigated");
       } catch (error) {
-        console.warn("Startup sync failed:", error);
         syncPromise = null;
       }
     })();

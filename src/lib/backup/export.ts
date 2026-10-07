@@ -23,17 +23,6 @@ export function exportAllLocalData(userId: string): BackupSnapshot {
     [userId],
   );
 
-  console.log(
-    "export: raw incomings from SQLite =",
-    JSON.stringify(
-      incomings.map((i) => ({
-        id: i.id,
-        value: i.value,
-        updated_at: i.updated_at,
-      })),
-    ),
-  );
-
   const expenses = db.getAllSync<LocalExpense>(
     `SELECT * FROM expenses WHERE user_id = ? AND deleted_at IS NULL`,
     [userId],

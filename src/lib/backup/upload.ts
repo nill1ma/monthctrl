@@ -9,13 +9,6 @@ function jsonToGzipBytes(data: unknown): Uint8Array {
 
 export async function uploadBackup(userId: string): Promise<void> {
   const snapshot = exportAllLocalData(userId);
-  console.log("upload: exportedAt =", snapshot.exportedAt);
-  console.log(
-    "upload: incomings =",
-    JSON.stringify(
-      snapshot.incomings.map((i) => ({ id: i.id, value: i.value })),
-    ),
-  );
 
   const compressed = jsonToGzipBytes(snapshot);
 
@@ -28,5 +21,4 @@ export async function uploadBackup(userId: string): Promise<void> {
     });
 
   if (error) throw new Error(error.message);
-  console.log("upload: done at", new Date().toISOString());
 }

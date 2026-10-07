@@ -48,11 +48,12 @@ export default function IncomingFormScreen() {
   });
 
   const onSubmit = handleSubmit(async (values) => {
+    const numericValue = Number(values.value); // converte aqui
     try {
       if (id) {
         await updateMutation({
           id,
-          value: values.value,
+          value: numericValue,
           origin: values.origin,
           reference: values.reference,
           category_id: values.category_id,
@@ -63,7 +64,7 @@ export default function IncomingFormScreen() {
           params: { reference: values.reference },
         });
       } else {
-        await createMutation(values);
+        await createMutation({ ...values, value: numericValue });
         return router.push("/");
       }
     } catch (error) {

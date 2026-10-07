@@ -55,8 +55,7 @@ export function FormField<TFieldValues extends FieldValues>({
             onBlur={onBlur}
             onChangeText={(text) => {
               if (decimals !== undefined) {
-                const masked = applyCurrencyMask(text, decimals);
-                onChange(masked === "" ? 0 : Number(masked));
+                onChange(applyCurrencyMask(text, decimals)); // string, sem Number()
               } else {
                 onChange(text);
               }

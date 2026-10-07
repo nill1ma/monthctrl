@@ -45,11 +45,12 @@ export default function ExpenseFormScreen() {
   });
 
   const onSubmit = handleSubmit(async (values) => {
+    const numericValue = Number(values.value);
     try {
       if (id) {
         await updateMutation({
           id,
-          value: values.value,
+          value: numericValue,
           destination: values.destination,
           reference: values.reference,
           category_id: values.category_id,
@@ -60,7 +61,7 @@ export default function ExpenseFormScreen() {
           params: { reference: values.reference },
         });
       } else {
-        await createMutation(values);
+        await createMutation({ ...values, value: numericValue });
         return router.push("/");
       }
     } catch (error) {
