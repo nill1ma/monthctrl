@@ -106,7 +106,7 @@ export default function DetailsScreen() {
   const expenseSections = groupByCurrency(
     (expenses ?? []).map((item) => ({
       id: item.id,
-      value: item.value,
+      value: item.value ?? 0,
       currency: item.currency,
       label: item.destination,
       type: "expenses" as const,
