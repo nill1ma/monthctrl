@@ -97,7 +97,11 @@ export default function DetailsScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Skeleton width={150} height={32} style={styles.title} />
+        <Skeleton
+          width={150}
+          height={32}
+          style={{ marginBottom: Spacing.four }}
+        />
         <SkeletonSection />
         <SkeletonSection />
       </View>
@@ -245,13 +249,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: Spacing.four },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { fontSize: 16 },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.four,
-  },
-  title: { fontSize: 24, fontWeight: "600" },
   listContent: { gap: Spacing.three },
   sectionTitle: {
     fontSize: 18,

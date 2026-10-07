@@ -3,6 +3,8 @@ import { SkeletonRow } from "@/components/ui/skeleton-row";
 import { Spacing } from "@/constants/theme";
 import { useCurrencyTotals } from "@/hooks/use-currency-totals";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { useExpenses } from "@/hooks/use-expenses";
+import { useIncomings } from "@/hooks/use-incomings";
 import { useListTransactions } from "@/hooks/use-list-transactions";
 import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
@@ -10,11 +12,12 @@ import {
   getConvertedBalance,
   groupTransactionsByReference,
 } from "@/lib/transactions";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useIntl } from "react-intl";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -47,6 +50,28 @@ export default function List() {
 
   const referenceGroups = groupTransactionsByReference(transactions);
   const hasMultipleCurrencies = availableCurrencies.length > 1;
+
+  const router = useRouter();
+  const { deleteIncomingsByReferenceMutate } = useIncomings();
+  const { deleteExpensesByReferenceMutate } = useExpenses();
+
+  function handleDeleteAll(reference: string) {
+    Alert.alert(
+      formatMessage({ id: "details.deleteAll.title" }),
+      formatMessage({ id: "details.deleteAll.message" }, { reference }),
+      [
+        { text: formatMessage({ id: "login.cancel" }), style: "cancel" },
+        {
+          text: formatMessage({ id: "details.delete.confirm" }),
+          style: "destructive",
+          onPress: () => {
+            deleteIncomingsByReferenceMutate(reference);
+            deleteExpensesByReferenceMutate(reference);
+          },
+        },
+      ],
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -84,76 +109,73 @@ export default function List() {
               : null;
 
           return (
-            <Link href={`/details/${group.reference}`} asChild>
-              <Pressable
-                style={StyleSheet.flatten([
-                  styles.row,
-                  {
-                    backgroundColor: colors.backgroundElement,
-                    borderBottomColor: colors.backgroundSelected,
-                  },
-                ])}
-              >
-                <View style={styles.rowHeader}>
-                  <Text style={[styles.reference, { color: colors.text }]}>
-                    {group.reference}
-                  </Text>
-                </View>
+            <Pressable
+              onPress={() => router.push(`/details/${group.reference}`)}
+              onLongPress={() => handleDeleteAll(group.reference)}
+              delayLongPress={400}
+              style={StyleSheet.flatten([
+                styles.row,
+                {
+                  backgroundColor: colors.backgroundElement,
+                  borderBottomColor: colors.backgroundSelected,
+                },
+              ])}
+            >
+              <View style={styles.rowHeader}>
+                <Text style={[styles.reference, { color: colors.text }]}>
+                  {group.reference}
+                </Text>
+              </View>
 
-                {convertEnabled ? (
-                  ratesLoading || !converted ? (
-                    <ActivityIndicator size="small" color={colors.text} />
-                  ) : (
+              {convertEnabled ? (
+                ratesLoading || !converted ? (
+                  <ActivityIndicator size="small" color={colors.text} />
+                ) : (
+                  <Text
+                    style={[
+                      styles.netIncome,
+                      { color: converted.net >= 0 ? "#10B981" : "#EF4444" },
+                    ]}
+                  >
+                    {formatMessage({ id: "list.balance" })}: ≈{" "}
+                    {formatCurrency(converted.net, displayCurrency)}
+                  </Text>
+                )
+              ) : (
+                group.currencies.map((entry) => (
+                  <View key={entry.currency} style={styles.currencyRow}>
                     <Text
                       style={[
-                        styles.netIncome,
-                        { color: converted.net >= 0 ? "#10B981" : "#EF4444" },
+                        styles.currencyLabel,
+                        { color: colors.textSecondary },
                       ]}
                     >
-                      {formatMessage({ id: "list.balance" })}: ≈{" "}
-                      {formatCurrency(converted.net, displayCurrency)}
+                      {getCurrencyFlag(entry.currency)} {entry.currency}
                     </Text>
-                  )
-                ) : (
-                  group.currencies.map((entry) => (
-                    <View key={entry.currency} style={styles.currencyRow}>
+                    <View style={styles.rowDetails}>
+                      <Text style={[styles.detailValue, { color: "#10B981" }]}>
+                        {formatCurrency(entry.incoming_value, entry.currency)}
+                      </Text>
+                      <Text style={[styles.detailValue, { color: "#EF4444" }]}>
+                        {formatCurrency(entry.expense_value, entry.currency)}
+                      </Text>
                       <Text
                         style={[
-                          styles.currencyLabel,
-                          { color: colors.textSecondary },
+                          styles.detailValue,
+                          {
+                            color:
+                              entry.net_income >= 0 ? "#10B981" : "#EF4444",
+                            fontWeight: "700",
+                          },
                         ]}
                       >
-                        {getCurrencyFlag(entry.currency)} {entry.currency}
+                        {formatCurrency(entry.net_income, entry.currency)}
                       </Text>
-                      <View style={styles.rowDetails}>
-                        <Text
-                          style={[styles.detailValue, { color: "#10B981" }]}
-                        >
-                          {formatCurrency(entry.incoming_value, entry.currency)}
-                        </Text>
-                        <Text
-                          style={[styles.detailValue, { color: "#EF4444" }]}
-                        >
-                          {formatCurrency(entry.expense_value, entry.currency)}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.detailValue,
-                            {
-                              color:
-                                entry.net_income >= 0 ? "#10B981" : "#EF4444",
-                              fontWeight: "700",
-                            },
-                          ]}
-                        >
-                          {formatCurrency(entry.net_income, entry.currency)}
-                        </Text>
-                      </View>
                     </View>
-                  ))
-                )}
-              </Pressable>
-            </Link>
+                  </View>
+                ))
+              )}
+            </Pressable>
           );
         }}
         onEndReached={() => {
