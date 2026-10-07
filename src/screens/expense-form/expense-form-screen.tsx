@@ -1,9 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useIntl } from "react-intl";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { TransactionForm } from "@/components/organisms/transaction-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spacing } from "@/constants/theme";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useTheme } from "@/hooks/use-theme";
 import { ExpenseFormValues, expenseSchema } from "@/schemas/transaction-schema";
@@ -83,9 +85,29 @@ export default function ExpenseFormScreen() {
 
   if (isCreating || isUpdating || isLoadingSingleExpense)
     return (
-      <Text style={{ color: colors.text }}>
-        {formatMessage({ id: "create.update.loading" })}
-      </Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Skeleton
+          width={200}
+          height={20}
+          style={{ marginBottom: Spacing.three }}
+        />
+        <Skeleton
+          width="100%"
+          height={50}
+          style={{ marginBottom: Spacing.three }}
+        />
+        <Skeleton
+          width="100%"
+          height={50}
+          style={{ marginBottom: Spacing.three }}
+        />
+        <Skeleton
+          width="100%"
+          height={50}
+          style={{ marginBottom: Spacing.three }}
+        />
+        <Skeleton width={150} height={50} />
+      </View>
     );
 
   return (

@@ -1,17 +1,12 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonSection } from "@/components/ui/skeleton-section";
 import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
 import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
-import {
-  ActivityIndicator,
-  Pressable,
-  SectionList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 
 type TransactionType = "incomings" | "expenses";
 
@@ -76,8 +71,10 @@ export default function DetailsScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.text} />
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Skeleton width={150} height={32} style={styles.title} />
+        <SkeletonSection />
+        <SkeletonSection />
       </View>
     );
   }

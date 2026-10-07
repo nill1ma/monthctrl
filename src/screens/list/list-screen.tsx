@@ -1,4 +1,5 @@
 import { CurrencySelect } from "@/components/molecules/currency-select";
+import { SkeletonRow } from "@/components/ui/skeleton-row";
 import { Spacing } from "@/constants/theme";
 import { useCurrencyTotals } from "@/hooks/use-currency-totals";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
@@ -169,15 +170,17 @@ export default function List() {
         }}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            {isLoading ? (
-              <ActivityIndicator size="large" color={colors.text} />
-            ) : (
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-                {formatMessage({ id: "list.empty" })}
-              </Text>
-            )}
-          </View>
+          isLoading ? (
+            <View style={styles.emptyContainer}>
+              <SkeletonRow />
+              <SkeletonRow />
+              <SkeletonRow />
+            </View>
+          ) : (
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              {formatMessage({ id: "list.empty" })}
+            </Text>
+          )
         }
         ListFooterComponent={
           isLoading ? (
