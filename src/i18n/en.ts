@@ -56,6 +56,10 @@ export const en: Record<string, string> = {
   "details.goBack.button": "Go to list",
   "details.goBack.button.tooltip": "Go to list page",
 
+  "details.delete.title": "Delete item",
+  "details.delete.message": "This action cannot be undone.",
+  "details.delete.confirm": "Delete",
+
   "list.title": "Transactions",
   "list.incoming": "Incomings",
   "list.expense": "Expenses",
@@ -96,8 +100,10 @@ export const en: Record<string, string> = {
 
   "toast.incoming.created": "Incoming created successfully",
   "toast.incoming.updated": "Incoming updated successfully",
+  "toast.incoming.deleted": "Incoming deleted successfully",
   "toast.expense.created": "Expense created successfully",
   "toast.expense.updated": "Expense updated successfully",
+  "toast.expense.deleted": "Expense deleted successfully",
   "toast.profile.saved": "Profile saved successfully",
   "toast.password.changed": "Password changed successfully",
   "toast.error": "Something went wrong. Please try again.",

@@ -1,12 +1,23 @@
+import { SwipeableRow } from "@/components/molecules/swipeable-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SkeletonSection } from "@/components/ui/skeleton-section";
 import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
+import { useExpenses } from "@/hooks/use-expenses";
+import { useIncomings } from "@/hooks/use-incomings";
 import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { useIntl } from "react-intl";
-import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 type TransactionType = "incomings" | "expenses";
 
@@ -61,6 +72,18 @@ export default function DetailsScreen() {
   const router = useRouter();
   const { reference, incomings, expenses, isLoading, isError } =
     useDetailsTransactions();
+  const { deleteMutation: deleteIncoming } = useIncomings();
+  const { deleteMutation: deleteExpense } = useExpenses();
+
+  useEffect(() => {
+    if (isLoading) return;
+    const hasData =
+      (incomings && incomings.length > 0) || (expenses && expenses.length > 0);
+
+    if (!hasData && !isLoading) {
+      router.replace("/");
+    }
+  }, [incomings, expenses, isLoading]);
 
   function handlePressItem(id: string, type: TransactionType) {
     router.push({
@@ -113,6 +136,27 @@ export default function DetailsScreen() {
 
   const sections = [...incomingSections, ...expenseSections];
 
+  function handleDeleteItem(id: string, type: TransactionType) {
+    Alert.alert(
+      formatMessage({ id: "details.delete.title" }),
+      formatMessage({ id: "details.delete.message" }),
+      [
+        { text: formatMessage({ id: "login.cancel" }), style: "cancel" },
+        {
+          text: formatMessage({ id: "details.delete.confirm" }),
+          style: "destructive",
+          onPress: async () => {
+            if (type === "incomings") {
+              await deleteIncoming(id);
+            } else {
+              await deleteExpense(id);
+            }
+          },
+        },
+      ],
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.text }]}>{reference}</Text>
@@ -122,26 +166,31 @@ export default function DetailsScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <Pressable
-            onPress={() => handlePressItem(item.id, item.type)}
-            android_ripple={{ color: colors.backgroundSelected }}
-            style={({ pressed }) => [
-              styles.row,
-              {
-                backgroundColor: pressed
-                  ? colors.backgroundSelected
-                  : colors.backgroundElement,
-                borderBottomColor: colors.backgroundSelected,
-              },
-            ]}
+          <SwipeableRow
+            onEdit={() => handlePressItem(item.id, item.type)}
+            onDelete={() => handleDeleteItem(item.id, item.type)}
           >
-            <Text style={[styles.label, { color: colors.text }]}>
-              {item.label}
-            </Text>
-            <Text style={[styles.value, { color: colors.text }]}>
-              {formatCurrency(item.value, item.currency)}
-            </Text>
-          </Pressable>
+            <Pressable
+              onPress={() => handlePressItem(item.id, item.type)}
+              android_ripple={{ color: colors.backgroundSelected }}
+              style={({ pressed }) => [
+                styles.row,
+                {
+                  backgroundColor: pressed
+                    ? colors.backgroundSelected
+                    : colors.backgroundElement,
+                  borderBottomColor: colors.backgroundSelected,
+                },
+              ]}
+            >
+              <Text style={[styles.label, { color: colors.text }]}>
+                {item.label}
+              </Text>
+              <Text style={[styles.value, { color: colors.text }]}>
+                {formatCurrency(item.value, item.currency)}
+              </Text>
+            </Pressable>
+          </SwipeableRow>
         )}
         renderSectionHeader={({ section }) => (
           <Text style={[styles.sectionTitle, { color: colors.text }]}>

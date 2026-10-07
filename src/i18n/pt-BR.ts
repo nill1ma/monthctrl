@@ -58,6 +58,10 @@ export const pt: Record<string, string> = {
   "details.goBack.button": "Ir para a listagem",
   "details.goBack.button.tooltip": "Ir para a página de listagem",
 
+  "details.delete.title": "Excluir item",
+  "details.delete.message": "Esta ação não pode ser desfeita.",
+  "details.delete.confirm": "Excluir",
+
   "list.title": "Transações",
   "list.incoming": "Receitas",
   "list.expense": "Despesas",

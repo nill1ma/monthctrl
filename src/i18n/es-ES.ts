@@ -48,6 +48,10 @@ export const es: Record<string, string> = {
   "details.goBack.button": "Ir a la lista",
   "details.goBack.button.tooltip": "Ir a la página de la lista",
 
+  "details.delete.title": "Eliminar elemento",
+  "details.delete.message": "Esta acción no se puede deshacer.",
+  "details.delete.confirm": "Eliminar",
+
   "list.title": "Transacciones",
   "list.incoming": "Ingresos",
   "list.expense": "Gastos",

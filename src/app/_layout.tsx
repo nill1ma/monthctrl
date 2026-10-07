@@ -18,6 +18,7 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 function NavigationThemeWrapper({ children }: { children: React.ReactNode }) {
   const { scheme } = useAppTheme();
@@ -50,25 +51,27 @@ export default function RootLayout() {
   if (!dbReady) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppThemeProvider>
-        <NavigationThemeWrapper>
-          <AuthProvider>
-            <LocaleProvider>
-              <I18Provider>
-                <ToastProvider>
-                  <View style={{ flex: 1 }}>
-                    <GlobalThemeControl />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <AppThemeProvider>
+          <NavigationThemeWrapper>
+            <AuthProvider>
+              <LocaleProvider>
+                <I18Provider>
+                  <ToastProvider>
                     <View style={{ flex: 1 }}>
-                      <Slot />
+                      <GlobalThemeControl />
+                      <View style={{ flex: 1 }}>
+                        <Slot />
+                      </View>
                     </View>
-                  </View>
-                </ToastProvider>
-              </I18Provider>
-            </LocaleProvider>
-          </AuthProvider>
-        </NavigationThemeWrapper>
-      </AppThemeProvider>
-    </QueryClientProvider>
+                  </ToastProvider>
+                </I18Provider>
+              </LocaleProvider>
+            </AuthProvider>
+          </NavigationThemeWrapper>
+        </AppThemeProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

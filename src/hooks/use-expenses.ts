@@ -69,9 +69,17 @@ export function useExpenses(reference?: string, id?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({
+        queryKey: ["transactions-by-references"],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.refetchQueries({ queryKey: ["details"] });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.expense.deleted" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 

@@ -77,9 +77,17 @@ export function useIncomings(reference?: string, id?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["incomings"] });
       queryClient.invalidateQueries({
+        queryKey: ["transactions-by-references"],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      queryClient.refetchQueries({ queryKey: ["details"] });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.incoming.deleted" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 
