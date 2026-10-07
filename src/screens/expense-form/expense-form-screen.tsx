@@ -38,7 +38,7 @@ export default function ExpenseFormScreen() {
   } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
-      value: 0,
+      value: "0.00",
       destination: "",
       reference: getCurrentFeference(),
       category_id: "default-travel",
@@ -74,7 +74,7 @@ export default function ExpenseFormScreen() {
   useEffect(() => {
     if (dataSingleExpense && !isLoadingSingleExpense) {
       reset({
-        value: dataSingleExpense.value ?? 0,
+        value: dataSingleExpense.value?.toString() ?? "0.00",
         destination: dataSingleExpense.destination ?? "",
         reference: dataSingleExpense.reference ?? "",
         category_id: dataSingleExpense.category_id ?? "",

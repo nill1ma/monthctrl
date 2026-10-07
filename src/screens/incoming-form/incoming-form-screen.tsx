@@ -41,7 +41,7 @@ export default function IncomingFormScreen() {
   } = useForm<IncomingFormValues>({
     resolver: zodResolver(incomingSchema),
     defaultValues: {
-      value: 0,
+      value: "0.00",
       origin: "",
       reference: getCurrentFeference(),
       category_id: "default-salary",
@@ -77,7 +77,7 @@ export default function IncomingFormScreen() {
   useEffect(() => {
     if (dataSingleIncoming && !isLoadingSingleIncoming) {
       reset({
-        value: dataSingleIncoming.value ?? 0,
+        value: dataSingleIncoming.value?.toString() ?? "0.00",
         origin: dataSingleIncoming.origin ?? "",
         reference: dataSingleIncoming.reference ?? "",
         category_id: dataSingleIncoming.category_id ?? "",
