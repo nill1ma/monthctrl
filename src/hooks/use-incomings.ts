@@ -2,6 +2,7 @@ import { useToast } from "@/context/toast";
 import {
   createIncoming,
   deleteIncoming,
+  deleteIncomingsByReference,
   getIncomingByReference,
   getIncomingsById,
   updateIncoming,
@@ -91,6 +92,29 @@ export function useIncomings(reference?: string, id?: string) {
     },
   });
 
+  const {
+    mutate: deleteIncomingsByReferenceMutate,
+    isPending: isDeletingByReference,
+  } = useMutation({
+    mutationFn: deleteIncomingsByReference,
+    mutationKey: ["delete-incomings-by-reference"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["incomings"] });
+      queryClient.invalidateQueries({
+        queryKey: ["transactions-by-references"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["incomings-expenses-transactions"],
+      });
+      queryClient.refetchQueries({ queryKey: ["details"] });
+      debounceBackup();
+      showToast(formatMessage({ id: "toast.incoming.deleted" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
+    },
+  });
+
   return {
     data,
     isLoading,
@@ -102,5 +126,7 @@ export function useIncomings(reference?: string, id?: string) {
     isCreating,
     isDeleting,
     isUpdating,
+    deleteIncomingsByReferenceMutate,
+    isDeletingByReference,
   };
 }

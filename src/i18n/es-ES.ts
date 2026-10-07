@@ -23,6 +23,7 @@ export const es: Record<string, string> = {
   "profile.currentPassword": "Contraseña actual",
   "profile.newPassword": "Nueva contraseña",
   "profile.confirmPassword": "Confirmar nueva contraseña",
+  "profile.title": "Perfil",
 
   "create.update.incomings.origin": "Origen",
   "create.update.expenses.destination": "Destino",
@@ -52,6 +53,16 @@ export const es: Record<string, string> = {
   "details.delete.message": "Esta acción no se puede deshacer.",
   "details.delete.confirm": "Eliminar",
 
+  "details.loading": "Cargando...",
+  "details.error": "No se pudieron cargar los detalles.",
+  "details.empty": "No se encontraron datos.",
+
+  "details.deleteAll.title": "Eliminar todas las transacciones",
+  "details.deleteAll.message":
+    "Esto eliminará todos los ingresos y gastos de {reference}. Esta acción no se puede deshacer.",
+  "details.deleteAll.label":
+    "Eliminar todas las transacciones de esta referencia",
+
   "list.title": "Transacciones",
   "list.incoming": "Ingresos",
   "list.expense": "Gastos",
@@ -65,10 +76,6 @@ export const es: Record<string, string> = {
   "list.drawer.create.expense": "Crear gasto",
   "list.drawer.logout": "Cerrar sesión",
   "list.drawer.profile": "Perfil",
-
-  "details.loading": "Cargando...",
-  "details.error": "No se pudieron cargar los detalles.",
-  "details.empty": "No se encontraron datos.",
 
   "create.update.loading": "Espere, estamos terminando esta operación...",
 

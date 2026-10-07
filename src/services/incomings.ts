@@ -1,6 +1,7 @@
 import {
   createIncoming as createIncomingQuery,
   deleteIncoming as deleteIncomingQuery,
+  deleteIncomingsByReference as deleteIncomingsByReferenceQuery,
   getIncomingById,
   getIncomingsByReference,
   getIncomings as getIncomingsQuery,
@@ -35,4 +36,9 @@ export async function updateIncoming(formData: UpdateIncoming) {
 
 export async function deleteIncoming(incoming_id: string) {
   deleteIncomingQuery(incoming_id);
+}
+
+export async function deleteIncomingsByReference(reference: string) {
+  const userId = await getAuthenticatedUserId();
+  deleteIncomingsByReferenceQuery(userId, reference);
 }

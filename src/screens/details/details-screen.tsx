@@ -7,7 +7,8 @@ import { useExpenses } from "@/hooks/use-expenses";
 import { useIncomings } from "@/hooks/use-incomings";
 import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
-import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -18,7 +19,6 @@ import {
   Text,
   View,
 } from "react-native";
-
 type TransactionType = "incomings" | "expenses";
 
 type Row = {
@@ -72,8 +72,10 @@ export default function DetailsScreen() {
   const router = useRouter();
   const { reference, incomings, expenses, isLoading, isError } =
     useDetailsTransactions();
-  const { deleteMutation: deleteIncoming } = useIncomings();
-  const { deleteMutation: deleteExpense } = useExpenses();
+  const { deleteMutation: deleteIncoming, deleteIncomingsByReferenceMutate } =
+    useIncomings();
+  const { deleteMutation: deleteExpense, deleteExpensesByReferenceMutate } =
+    useExpenses();
 
   useEffect(() => {
     if (isLoading) return;
@@ -157,10 +159,42 @@ export default function DetailsScreen() {
     );
   }
 
+  function handleDeleteAll() {
+    Alert.alert(
+      formatMessage({ id: "details.deleteAll.title" }),
+      formatMessage({ id: "details.deleteAll.message" }, { reference }),
+      [
+        { text: formatMessage({ id: "login.cancel" }), style: "cancel" },
+        {
+          text: formatMessage({ id: "details.delete.confirm" }),
+          style: "destructive",
+          onPress: () => {
+            deleteIncomingsByReferenceMutate(reference!);
+            deleteExpensesByReferenceMutate(reference!);
+          },
+        },
+      ],
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>{reference}</Text>
-
+      <Stack.Screen
+        options={{
+          title: reference ?? "",
+          headerRight: () => (
+            <Pressable
+              onPress={handleDeleteAll}
+              hitSlop={8}
+              accessibilityLabel={formatMessage({
+                id: "details.deleteAll.label",
+              })}
+            >
+              <Ionicons name="trash-outline" size={22} color="#EF4444" />
+            </Pressable>
+          ),
+        }}
+      />
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
@@ -211,7 +245,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: Spacing.four },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   errorText: { fontSize: 16 },
-  title: { fontSize: 24, fontWeight: "600", marginBottom: Spacing.four },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.four,
+  },
+  title: { fontSize: 24, fontWeight: "600" },
   listContent: { gap: Spacing.three },
   sectionTitle: {
     fontSize: 18,

@@ -50,14 +50,6 @@ export default function List() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View
-        style={[styles.header, { borderBottomColor: colors.backgroundElement }]}
-      >
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
-          {formatMessage({ id: "list.title" })}
-        </Text>
-      </View>
-
       {hasMultipleCurrencies && (
         <View
           style={[
@@ -195,22 +187,6 @@ export default function List() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.three,
-    borderBottomWidth: 1,
-  },
-  headerTitle: { fontSize: 24, fontWeight: "bold" },
-  logoutButton: {
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-    backgroundColor: "#EF4444",
-    borderRadius: 8,
-  },
-  logoutButtonText: { color: "white", fontWeight: "600", fontSize: 14 },
   convertBar: {
     marginHorizontal: Spacing.three,
     marginTop: Spacing.three,

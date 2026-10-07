@@ -109,3 +109,16 @@ export function getExpensesByReference(
     [userId, reference],
   );
 }
+
+export function deleteExpensesByReference(
+  userId: string,
+  reference: string,
+): void {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  db.runSync(
+    `UPDATE expenses SET deleted_at = ?, updated_at = ? WHERE user_id = ? AND reference = ? AND deleted_at IS NULL`,
+    [now, now, userId, reference],
+  );
+}

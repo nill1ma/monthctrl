@@ -1,6 +1,7 @@
 import {
   createExpense as createExpenseQuery,
   deleteExpense as deleteExpenseQuery,
+  deleteExpensesByReference as deleteExpensesByReferenceQuery,
   getExpenseById as getExpenseByIdQuery,
   getExpensesByReference,
   getExpenses as getExpensesQuery,
@@ -35,4 +36,8 @@ export async function updateExpense(formData: UpdateExpense) {
 
 export async function deleteExpense(expense_id: string) {
   deleteExpenseQuery(expense_id);
+}
+export async function deleteExpensesByReference(reference: string) {
+  const userId = await getAuthenticatedUserId();
+  deleteExpensesByReferenceQuery(userId, reference);
 }

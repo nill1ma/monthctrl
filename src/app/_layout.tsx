@@ -1,4 +1,3 @@
-import { GlobalThemeControl } from "@/components/organisms/global-theme-control";
 import { AuthProvider } from "@/context/auth";
 import { I18Provider } from "@/context/intl-provider";
 import { LocaleProvider } from "@/context/locale";
@@ -60,7 +59,6 @@ export default function RootLayout() {
                 <I18Provider>
                   <ToastProvider>
                     <View style={{ flex: 1 }}>
-                      <GlobalThemeControl />
                       <View style={{ flex: 1 }}>
                         <Slot />
                       </View>

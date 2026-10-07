@@ -31,6 +31,7 @@ export const en: Record<string, string> = {
   "profile.currentPassword": "Current password",
   "profile.newPassword": "New password",
   "profile.confirmPassword": "Confirm new password",
+  "profile.title": "Profile",
 
   "create.update.incomings.origin": "Origin",
   "create.update.expenses.destination": "Destination",
@@ -60,6 +61,15 @@ export const en: Record<string, string> = {
   "details.delete.message": "This action cannot be undone.",
   "details.delete.confirm": "Delete",
 
+  "details.loading": "Loading...",
+  "details.error": "Unable to load details.",
+  "details.empty": "No data found.",
+
+  "details.deleteAll.title": "Delete all transactions",
+  "details.deleteAll.message":
+    "This will delete all incomings and expenses for {reference}. This action cannot be undone.",
+  "details.deleteAll.label": "Delete all transactions for this reference",
+
   "list.title": "Transactions",
   "list.incoming": "Incomings",
   "list.expense": "Expenses",
@@ -73,10 +83,6 @@ export const en: Record<string, string> = {
   "list.drawer.create.expense": "Create Expense",
   "list.drawer.logout": "Logout",
   "list.drawer.profile": "Profile",
-
-  "details.loading": "Loading...",
-  "details.error": "Unable to load details.",
-  "details.empty": "No data found.",
 
   "create.update.loading": "Wait, we are finishing this operation...",
 
