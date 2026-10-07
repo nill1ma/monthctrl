@@ -39,6 +39,42 @@ export function getGroupedTransactions(userId: string): GroupedTransaction[] {
  * Equivalente à RPC `get_distinct_references`.
  * Retorna as references distintas da página, com o total geral.
  */
+
+export function getGroupedTransactionsByReferences(
+  userId: string,
+  references: string[],
+): GroupedTransaction[] {
+  if (references.length === 0) return [];
+
+  const db = getDatabase();
+  const placeholders = references.map(() => "?").join(", ");
+
+  return db.getAllSync<GroupedTransaction>(
+    `
+    SELECT
+      reference,
+      currency,
+      SUM(CASE WHEN type = 'incoming' THEN value ELSE 0 END) AS incoming_value,
+      SUM(CASE WHEN type = 'expense'  THEN value ELSE 0 END) AS expense_value,
+      SUM(CASE WHEN type = 'incoming' THEN value ELSE -value END) AS net_income
+    FROM (
+      SELECT reference, value, currency, 'incoming' AS type
+      FROM incomings
+      WHERE user_id = ? AND deleted_at IS NULL
+
+      UNION ALL
+
+      SELECT reference, value, currency, 'expense' AS type
+      FROM expenses
+      WHERE user_id = ? AND deleted_at IS NULL
+    )
+    WHERE reference IN (${placeholders})
+    GROUP BY reference, currency
+    ORDER BY reference DESC, currency ASC
+    `,
+    [userId, userId, ...references],
+  );
+}
 export function getDistinctReferences(
   page: number,
   userId: string,

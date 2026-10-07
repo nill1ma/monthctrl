@@ -1,5 +1,6 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
+import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
 import { useRouter } from "expo-router";
 import { useIntl } from "react-intl";
@@ -9,8 +10,7 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  useColorScheme,
-  View,
+  View
 } from "react-native";
 
 type TransactionType = "incomings" | "expenses";
@@ -61,8 +61,7 @@ function groupByCurrency(
 }
 
 export default function DetailsScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useTheme();
   const { formatMessage } = useIntl();
   const router = useRouter();
   const { reference, incomings, expenses, isLoading, isError } =

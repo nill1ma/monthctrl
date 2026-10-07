@@ -36,7 +36,13 @@
         }
       ],
       "expo-localization",
-      "@react-native-google-signin/google-signin"
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.SEU_IOS_CLIENT_ID"
+        }
+      ],
+      ["expo-sqlite", { "useSQLCipher": true }]
     ],
     "experiments": {
       "typedRoutes": true,

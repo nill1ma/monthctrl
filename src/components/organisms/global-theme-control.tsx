@@ -59,7 +59,7 @@ export function GlobalThemeControl() {
             <Pressable
               style={[
                 styles.closeButton,
-                { backgroundColor: colors.background },
+                { backgroundColor: colors.backgroundElement },
               ]}
               onPress={() => setVisible(false)}
             >

@@ -90,3 +90,15 @@ export function getIncomings(userId: string): LocalIncoming[] {
     [userId],
   );
 }
+
+export function getIncomingsByReference(
+  userId: string,
+  reference: string,
+): Pick<LocalIncoming, "id" | "value" | "origin" | "currency">[] {
+  const db = getDatabase();
+  return db.getAllSync(
+    `SELECT id, value, origin, currency FROM incomings
+     WHERE user_id = ? AND reference = ? AND deleted_at IS NULL`,
+    [userId, reference],
+  );
+}

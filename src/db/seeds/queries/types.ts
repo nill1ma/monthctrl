@@ -16,6 +16,7 @@ export type LocalIncoming = Tables<"incomings"> & {
 export type LocalExpense = Tables<"expenses"> & {
   updated_at: string;
   deleted_at: string | null;
+  created_at: string | null;
 };
 
 export type CurrencyTotal = {

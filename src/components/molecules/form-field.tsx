@@ -54,16 +54,12 @@ export function FormField<TFieldValues extends FieldValues>({
             ]}
             onBlur={onBlur}
             onChangeText={(text) => {
-              onChange(
-                decimals !== undefined
-                  ? applyCurrencyMask(text, decimals)
-                  : text,
-              );
-              // if (decimals !== undefined) {
-              //   onChange(sanitizeDecimalInput(text, decimals));
-              // } else {
-              //   onChange(text);
-              // }
+              if (decimals !== undefined) {
+                const masked = applyCurrencyMask(text, decimals);
+                onChange(masked === "" ? 0 : Number(masked));
+              } else {
+                onChange(text);
+              }
             }}
             value={value != null ? String(value) : ""}
             keyboardType={keyboardType}

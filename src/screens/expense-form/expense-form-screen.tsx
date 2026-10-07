@@ -7,6 +7,7 @@ import { TransactionForm } from "@/components/organisms/transaction-form";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useTheme } from "@/hooks/use-theme";
 import { ExpenseFormValues, expenseSchema } from "@/schemas/transaction-schema";
+import { getCurrentFeference } from "@/utils/text-format";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 
@@ -37,9 +38,9 @@ export default function ExpenseFormScreen() {
     defaultValues: {
       value: 0,
       destination: "",
-      reference: "",
-      category_id: "",
-      currency: "",
+      reference: getCurrentFeference(),
+      category_id: "default-travel",
+      currency: "BRL",
     },
   });
 

@@ -2,6 +2,7 @@ import { getDatabase } from "@/db/client";
 import * as Crypto from "expo-crypto";
 import type { LocalExpense } from "./types";
 
+// db/seeds/queries/expenses.ts
 type ExpenseInput = {
   user_id: string;
   reference: string;
@@ -9,8 +10,8 @@ type ExpenseInput = {
   destination: string;
   currency: string;
   category_id: string | null;
-  due_date: string | null;
-  payment_day: string | null;
+  due_date?: string | null;
+  payment_day?: string | null;
 };
 
 export function createExpense(input: ExpenseInput): LocalExpense {
@@ -30,8 +31,8 @@ export function createExpense(input: ExpenseInput): LocalExpense {
       input.destination,
       input.currency,
       input.category_id,
-      input.due_date,
-      input.payment_day,
+      input.due_date ?? null,
+      input.payment_day ?? null,
       now,
       now,
     ],
@@ -91,5 +92,20 @@ export function getExpenses(userId: string): LocalExpense[] {
      WHERE user_id = ? AND deleted_at IS NULL
      ORDER BY reference DESC, created_at DESC`,
     [userId],
+  );
+}
+
+export function getExpensesByReference(
+  userId: string,
+  reference: string,
+): Pick<
+  LocalExpense,
+  "id" | "value" | "destination" | "currency" | "category_id"
+>[] {
+  const db = getDatabase();
+  return db.getAllSync(
+    `SELECT id, value, destination, currency, category_id FROM expenses
+     WHERE user_id = ? AND reference = ? AND deleted_at IS NULL`,
+    [userId, reference],
   );
 }

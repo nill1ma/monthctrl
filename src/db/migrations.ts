@@ -65,4 +65,29 @@ export const migrations: Migration[] = [
       `);
     },
   },
+  {
+    version: 2,
+    up: (db) => {
+      db.execSync(`
+      CREATE TABLE IF NOT EXISTS profiles (
+        user_id TEXT PRIMARY KEY NOT NULL,
+        name TEXT,
+        nickname TEXT,
+        preferred_currency TEXT,
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+    `);
+    },
+  },
+  {
+    version: 3,
+    up: (db) => {
+      db.execSync(`
+      CREATE TABLE IF NOT EXISTS app_meta (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT
+      );
+    `);
+    },
+  },
 ];

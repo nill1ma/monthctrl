@@ -41,7 +41,7 @@ export function CurrencyPicker<TFieldValues extends FieldValues>({
             ]}
           >
             <Picker
-              selectedValue={value}
+              selectedValue={value || "BRL"}
               onValueChange={onChange}
               style={{ color: colors.text }}
               dropdownIconColor={colors.text}

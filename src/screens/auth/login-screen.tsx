@@ -1,14 +1,13 @@
-import { Colors } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import { AuthForm } from "@/screens/auth/auth-form";
 import { login } from "@/services/auth";
 import { Link } from "expo-router";
 import { useIntl } from "react-intl";
-import { Text, useColorScheme } from "react-native";
+import { Text } from "react-native";
 
 export default function LoginScreen() {
   const { formatMessage } = useIntl();
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useTheme();
 
   return (
     <AuthForm
@@ -23,7 +22,7 @@ export default function LoginScreen() {
         <Text>{formatMessage({ id: "login.signupLink.message" })} </Text>
         <Text
           style={{
-            color: colorScheme === "dark" ? "#208AEF" : "#0066CC",
+            color: "#208AEF",
             fontWeight: "bold",
           }}
         >

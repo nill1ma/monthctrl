@@ -6,9 +6,11 @@ import {
   updateIncoming,
 } from "@/services/incomings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useBackupDebounce } from "./use-backup-debounce";
 
 export function useIncomings(reference?: string, id?: string) {
   const queryClient = useQueryClient();
+  const debounceBackup = useBackupDebounce();
 
   const { data, isLoading } = useQuery({
     queryKey: ["incomings", reference],
@@ -35,6 +37,7 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["transactions-by-references"],
       });
+      debounceBackup();
     },
   });
 
@@ -52,6 +55,7 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["transactions-by-references"],
       });
+      debounceBackup();
     },
   });
 
@@ -63,6 +67,7 @@ export function useIncomings(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      debounceBackup();
     },
   });
 

@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import {
-    logout as logoutService,
-    signInWithGoogle as signInWithGoogleService,
+  logout as logoutService,
+  signInWithGoogle as signInWithGoogleService,
 } from "@/services/auth";
 import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -49,4 +49,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

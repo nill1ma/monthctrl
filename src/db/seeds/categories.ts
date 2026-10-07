@@ -17,5 +17,6 @@ export const DEFAULT_CATEGORIES: DefaultCategory[] = [
   { id: "default-health", name: "Health", type: "expense" },
   { id: "default-entertainment", name: "Entertainment", type: "expense" },
   { id: "default-education", name: "Education", type: "expense" },
+  { id: "default-travel", name: "Travel", type: "expense" },
   { id: "default-other-expense", name: "Other", type: "expense" },
 ];

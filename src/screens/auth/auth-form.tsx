@@ -1,13 +1,8 @@
-import { Colors, Spacing } from "@/constants/theme";
+import { GoogleSignInButton } from "@/components/molecules/google-signin-button";
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import { useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 type AuthFormProps = {
   title: string;
@@ -28,8 +23,7 @@ export function AuthForm({
   onSubmit,
   children,
 }: AuthFormProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -95,12 +89,12 @@ export function AuthForm({
           {error}
         </Text>
       )}
-
+      <GoogleSignInButton />
       <Button
         title={loading ? submitLabelLoading : submitLabel}
         onPress={handleSubmit}
         disabled={loading}
-        color={colorScheme === "dark" ? "#208AEF" : "#0066CC"}
+        color={"#208AEF"}
       />
       <Text
         style={StyleSheet.flatten([

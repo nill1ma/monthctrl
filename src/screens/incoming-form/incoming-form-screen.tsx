@@ -11,6 +11,7 @@ import {
   IncomingFormValues,
   incomingSchema,
 } from "@/schemas/transaction-schema";
+import { getCurrentFeference } from "@/utils/text-format";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function IncomingFormScreen() {
@@ -40,9 +41,9 @@ export default function IncomingFormScreen() {
     defaultValues: {
       value: 0,
       origin: "",
-      reference: "",
-      category_id: "",
-      currency: "",
+      reference: getCurrentFeference(),
+      category_id: "default-salary",
+      currency: "BRL",
     },
   });
 
@@ -77,7 +78,7 @@ export default function IncomingFormScreen() {
         origin: dataSingleIncoming.origin ?? "",
         reference: dataSingleIncoming.reference ?? "",
         category_id: dataSingleIncoming.category_id ?? "",
-        currency: dataSingleIncoming.currency ?? "",
+        currency: dataSingleIncoming.currency ?? "BRL",
       });
     }
   }, [dataSingleIncoming, isLoadingSingleIncoming, reset]);

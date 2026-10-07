@@ -1,91 +1,38 @@
-import { getAuthenticatedUserId, supabase } from "@/lib/supabase";
 import {
-  CreateIncoming,
-  Incoming,
-  UpdateIncoming,
-} from "@/types/incomings.types";
+  createIncoming as createIncomingQuery,
+  deleteIncoming as deleteIncomingQuery,
+  getIncomingById,
+  getIncomingsByReference,
+  getIncomings as getIncomingsQuery,
+  updateIncoming as updateIncomingQuery,
+} from "@/db/seeds/queries/incomings";
+import { getAuthenticatedUserId } from "@/lib/supabase";
+import { CreateIncoming, UpdateIncoming } from "@/types/incomings.types";
 
 export async function getIncomings() {
   const userId = await getAuthenticatedUserId();
-
-  const { data, error } = await supabase
-    .from("incomings")
-    .select("id, reference, value")
-    .eq("user_id", userId);
-  if (error) throw new Error(error.message);
-  return data;
+  return getIncomingsQuery(userId);
 }
 
 export async function getIncomingsById(id: string) {
-  const userId = await getAuthenticatedUserId();
-
-  const { data, error } = await supabase
-    .from("incomings")
-    .select("id, origin, value, reference, category_id, currency")
-    .eq("id", id)
-    .eq("user_id", userId)
-    .single();
-
-  if (error) throw new Error(error.message);
-
-  return data;
+  return getIncomingById(id);
 }
 
-export async function getIncomingByReference(
-  reference: string,
-): Promise<Pick<Incoming, "id" | "value" | "origin" | "currency">[]> {
+export async function getIncomingByReference(reference: string) {
   const userId = await getAuthenticatedUserId();
-  const { data, error } = await supabase
-    .from("incomings")
-    .select("id, value, origin, currency")
-    .eq("reference", reference)
-    .eq("user_id", userId);
-  if (error) throw new Error(error.message);
-  return data;
+  return getIncomingsByReference(userId, reference);
 }
 
 export async function createIncoming(formData: CreateIncoming) {
   const userId = await getAuthenticatedUserId();
-
-  const { data, error } = await supabase
-    .from("incomings")
-    .insert({
-      ...formData,
-      user_id: userId,
-    })
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  return data;
+  return createIncomingQuery({ ...formData, user_id: userId });
 }
 
 export async function updateIncoming(formData: UpdateIncoming) {
-  const userId = await getAuthenticatedUserId();
-
-  const { data, error } = await supabase
-    .from("incomings")
-    .update({
-      origin: formData.origin,
-      value: formData.value,
-      reference: formData.reference,
-      category_id: formData.category_id,
-      currency: formData.currency,
-      user_id: userId,
-    })
-    .eq("id", formData.id)
-    .select();
-
-  if (error) throw new Error(error.message);
-  return data;
+  const { id, ...rest } = formData;
+  return updateIncomingQuery(id, rest);
 }
 
 export async function deleteIncoming(incoming_id: string) {
-  const { data, error } = await supabase
-    .from("incomings")
-    .delete()
-    .eq("id", incoming_id);
-
-  if (error) throw new Error(error.message);
-  return data;
+  deleteIncomingQuery(incoming_id);
 }

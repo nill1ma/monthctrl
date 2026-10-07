@@ -6,9 +6,11 @@ import {
   updateExpense,
 } from "@/services/expenses";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useBackupDebounce } from "./use-backup-debounce";
 
 export function useExpenses(reference?: string, id?: string) {
   const queryClient = useQueryClient();
+  const debounceBackup = useBackupDebounce();
 
   const { data, isLoading } = useQuery({
     queryKey: ["expenses", reference],
@@ -24,6 +26,7 @@ export function useExpenses(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      debounceBackup();
     },
   });
 
@@ -44,6 +47,7 @@ export function useExpenses(reference?: string, id?: string) {
       });
       queryClient.invalidateQueries({ queryKey: ["expense"] });
       queryClient.refetchQueries({ queryKey: ["details"] });
+      debounceBackup();
     },
   });
 
@@ -55,6 +59,7 @@ export function useExpenses(reference?: string, id?: string) {
       queryClient.invalidateQueries({
         queryKey: ["incomings-expenses-transactions"],
       });
+      debounceBackup();
     },
   });
 

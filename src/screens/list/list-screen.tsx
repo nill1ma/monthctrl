@@ -1,14 +1,14 @@
 import { CurrencySelect } from "@/components/molecules/currency-select";
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { useCurrencyTotals } from "@/hooks/use-currency-totals";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
 import { useListTransactions } from "@/hooks/use-list-transactions";
+import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
 import {
   getConvertedBalance,
   groupTransactionsByReference,
 } from "@/lib/transactions";
-import { logout } from "@/services/auth";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { useIntl } from "react-intl";
@@ -19,16 +19,13 @@ import {
   StyleSheet,
   Switch,
   Text,
-  TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 
 export default function List() {
   const [loading, setLoading] = useState(false);
   const [convertEnabled, setConvertEnabled] = useState(false);
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useTheme();
   const { formatMessage } = useIntl();
 
   const { transactions, isLoading, fetchNextPage, hasNextPage } =
@@ -51,12 +48,6 @@ export default function List() {
   const referenceGroups = groupTransactionsByReference(transactions);
   const hasMultipleCurrencies = availableCurrencies.length > 1;
 
-  async function handleSubmit() {
-    setLoading(true);
-    await logout();
-    setLoading(false);
-  }
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View
@@ -65,15 +56,6 @@ export default function List() {
         <Text style={[styles.headerTitle, { color: colors.text }]}>
           {formatMessage({ id: "list.title" })}
         </Text>
-        <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={loading}
-          style={styles.logoutButton}
-        >
-          <Text style={styles.logoutButtonText}>
-            {formatMessage({ id: "list.logout" })}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {hasMultipleCurrencies && (
