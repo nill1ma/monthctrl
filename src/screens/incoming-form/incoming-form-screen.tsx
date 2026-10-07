@@ -6,6 +6,7 @@ import { StyleSheet, View } from "react-native";
 
 import { TransactionForm } from "@/components/organisms/transaction-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spacing } from "@/constants/theme";
 import { useIncomings } from "@/hooks/use-incomings";
 import { useTheme } from "@/hooks/use-theme";
 import {

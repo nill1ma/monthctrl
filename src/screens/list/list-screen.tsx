@@ -24,7 +24,6 @@ import {
 } from "react-native";
 
 export default function List() {
-  const [loading, setLoading] = useState(false);
   const [convertEnabled, setConvertEnabled] = useState(false);
   const colors = useTheme();
   const { formatMessage } = useIntl();

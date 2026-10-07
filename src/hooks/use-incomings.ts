@@ -1,3 +1,4 @@
+import { useToast } from "@/context/toast";
 import {
   createIncoming,
   deleteIncoming,
@@ -6,11 +7,14 @@ import {
   updateIncoming,
 } from "@/services/incomings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useIntl } from "react-intl";
 import { useBackupDebounce } from "./use-backup-debounce";
 
 export function useIncomings(reference?: string, id?: string) {
   const queryClient = useQueryClient();
   const debounceBackup = useBackupDebounce();
+  const { showToast } = useToast();
+  const { formatMessage } = useIntl();
 
   const { data, isLoading } = useQuery({
     queryKey: ["incomings", reference],
@@ -38,6 +42,10 @@ export function useIncomings(reference?: string, id?: string) {
         queryKey: ["transactions-by-references"],
       });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.incoming.created" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 
@@ -56,6 +64,10 @@ export function useIncomings(reference?: string, id?: string) {
         queryKey: ["transactions-by-references"],
       });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.incoming.updated" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 

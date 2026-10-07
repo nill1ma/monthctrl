@@ -23,6 +23,15 @@ export const en: Record<string, string> = {
   "signup.alreadyHaveAccount": "Already have an account?",
   "signup.loginLink": "Login",
 
+  "profile.name": "Name",
+  "profile.nickname": "Nickname",
+  "profile.currency": "Preferred currency",
+  "profile.changePassword": "Change password",
+  "profile.changePasswordButton": "Change password",
+  "profile.currentPassword": "Current password",
+  "profile.newPassword": "New password",
+  "profile.confirmPassword": "Confirm new password",
+
   "create.update.incomings.origin": "Origin",
   "create.update.expenses.destination": "Destination",
   "create.update.reference": "Reference",
@@ -59,6 +68,7 @@ export const en: Record<string, string> = {
   "list.drawer.create.incoming": "Create Incoming",
   "list.drawer.create.expense": "Create Expense",
   "list.drawer.logout": "Logout",
+  "list.drawer.profile": "Profile",
 
   "details.loading": "Loading...",
   "details.error": "Unable to load details.",
@@ -83,4 +93,12 @@ export const en: Record<string, string> = {
   "settings.theme": "Theme",
   "settings.language": "Language",
   "settings.close": "Close",
+
+  "toast.incoming.created": "Incoming created successfully",
+  "toast.incoming.updated": "Incoming updated successfully",
+  "toast.expense.created": "Expense created successfully",
+  "toast.expense.updated": "Expense updated successfully",
+  "toast.profile.saved": "Profile saved successfully",
+  "toast.password.changed": "Password changed successfully",
+  "toast.error": "Something went wrong. Please try again.",
 };

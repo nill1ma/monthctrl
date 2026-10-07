@@ -11,9 +11,6 @@ const PAGE_SIZE = 5;
 export function useListTransactions() {
   const { session } = useAuth();
 
-  // ─────────────────────────────────────────────
-  // Query 1: paginação por reference
-  // ─────────────────────────────────────────────
   const referencesQuery = useInfiniteQuery({
     queryKey: ["transaction-references", session?.user.id],
     queryFn: ({ pageParam = 1 }) =>

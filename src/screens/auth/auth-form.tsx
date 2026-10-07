@@ -1,8 +1,16 @@
 import { GoogleSignInButton } from "@/components/molecules/google-signin-button";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 type AuthFormProps = {
   title: string;
@@ -26,6 +34,7 @@ export function AuthForm({
   const colors = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -67,23 +76,35 @@ export function AuthForm({
         value={email}
         onChangeText={setEmail}
       />
-
-      <TextInput
-        style={StyleSheet.flatten([
-          styles.textInput,
-          {
-            backgroundColor: colors.backgroundElement,
-            borderColor: colors.backgroundSelected,
-            color: colors.text,
-          },
-        ])}
-        placeholder={passwordPlaceholder}
-        placeholderTextColor={colors.textSecondary}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={StyleSheet.flatten([
+            styles.textInput,
+            styles.passwordInput,
+            {
+              backgroundColor: colors.backgroundElement,
+              borderColor: colors.backgroundSelected,
+              color: colors.text,
+            },
+          ])}
+          placeholder={passwordPlaceholder}
+          placeholderTextColor={colors.textSecondary}
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Pressable
+          onPress={() => setShowPassword((prev) => !prev)}
+          style={styles.eyeButton}
+          hitSlop={8}
+        >
+          <Ionicons
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
+            size={20}
+            color={colors.textSecondary}
+          />
+        </Pressable>
+      </View>
       {error && (
         <Text style={StyleSheet.flatten([styles.error, { color: "#EF4444" }])}>
           {error}
@@ -130,6 +151,17 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.three,
     borderWidth: 1,
     fontSize: 16,
+  },
+  passwordContainer: {
+    position: "relative",
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 48, // espaço para o ícone
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 12,
   },
   error: { fontSize: 14, marginTop: Spacing.two, textAlign: "center" },
 });

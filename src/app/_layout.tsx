@@ -3,6 +3,7 @@ import { AuthProvider } from "@/context/auth";
 import { I18Provider } from "@/context/intl-provider";
 import { LocaleProvider } from "@/context/locale";
 import { AppThemeProvider, useAppTheme } from "@/context/theme";
+import { ToastProvider } from "@/context/toast";
 import { getDatabase, initializeDatabase } from "@/db/client";
 import { seedDefaultCategories } from "@/db/seeds/seed-categories";
 import "@/lib/google-signin";
@@ -55,12 +56,14 @@ export default function RootLayout() {
           <AuthProvider>
             <LocaleProvider>
               <I18Provider>
-                <View style={{ flex: 1 }}>
-                  <GlobalThemeControl />
+                <ToastProvider>
                   <View style={{ flex: 1 }}>
-                    <Slot />
+                    <GlobalThemeControl />
+                    <View style={{ flex: 1 }}>
+                      <Slot />
+                    </View>
                   </View>
-                </View>
+                </ToastProvider>
               </I18Provider>
             </LocaleProvider>
           </AuthProvider>

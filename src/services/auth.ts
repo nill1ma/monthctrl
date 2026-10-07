@@ -1,3 +1,4 @@
+import { upsertProfile } from "@/db/seeds/queries/profiles";
 import { supabase } from "@/lib/supabase";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -23,24 +24,16 @@ export async function signup(
   email: string,
   password: string,
 ): Promise<AuthResult> {
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({ email, password });
 
-  if (error) {
-    return { error: error.message };
+  if (error) return { error: error.message };
+
+  if (data.user) {
+    upsertProfile(data.user.id, {});
   }
 
   return {};
 }
-
-// export async function logout(): Promise<AuthResult> {
-//   const { error } = await supabase.auth.signOut();
-
-//   if (error) {
-//     return { error: error.message };
-//   }
-
-//   return {};
-// }
 
 export async function logout(): Promise<AuthResult> {
   await GoogleSignin.signOut();
@@ -55,10 +48,36 @@ export async function signInWithGoogle(): Promise<AuthResult> {
   if (!response.data?.idToken) {
     return { error: "No ID token returned" };
   }
-  const { error } = await supabase.auth.signInWithIdToken({
+  const { data, error } = await supabase.auth.signInWithIdToken({
     provider: "google",
     token: response.data.idToken,
   });
   if (error) return { error: error.message };
+
+  if (data.user) {
+    upsertProfile(data.user.id, {});
+  }
+  return {};
+}
+
+export async function changePassword(
+  email: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<AuthResult> {
+  // verifica senha atual
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  });
+
+  if (signInError) return { error: "Current password is incorrect" };
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (updateError) return { error: updateError.message };
+
   return {};
 }

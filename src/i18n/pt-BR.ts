@@ -25,6 +25,15 @@ export const pt: Record<string, string> = {
 
   "login.google": "Continuar com Google",
 
+  "profile.name": "Nome",
+  "profile.nickname": "Apelido",
+  "profile.currency": "Moeda preferida",
+  "profile.changePassword": "Alterar senha",
+  "profile.changePasswordButton": "Alterar senha",
+  "profile.currentPassword": "Senha atual",
+  "profile.newPassword": "Nova senha",
+  "profile.confirmPassword": "Confirmar nova senha",
+
   "create.update.incomings.origin": "Origem",
   "create.update.expenses.destination": "Destino",
   "create.update.reference": "Referência",
@@ -61,6 +70,7 @@ export const pt: Record<string, string> = {
   "list.drawer.create.incoming": "Criar receita",
   "list.drawer.create.expense": "Criar despesa",
   "list.drawer.logout": "Sair",
+  "list.drawer.profile": "Perfil",
 
   "details.loading": "Carregando...",
   "details.error": "Não foi possível carregar os detalhes.",
@@ -83,4 +93,12 @@ export const pt: Record<string, string> = {
   "settings.theme": "Tema",
   "settings.language": "Idioma",
   "settings.close": "Fechar",
+
+  "toast.incoming.created": "Receita criada com sucesso",
+  "toast.incoming.updated": "Receita atualizada com sucesso",
+  "toast.expense.created": "Despesa criada com sucesso",
+  "toast.expense.updated": "Despesa atualizada com sucesso",
+  "toast.profile.saved": "Perfil salvo com sucesso",
+  "toast.password.changed": "Senha alterada com sucesso",
+  "toast.error": "Algo deu errado. Tente novamente.",
 };

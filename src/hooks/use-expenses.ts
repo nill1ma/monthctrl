@@ -1,3 +1,4 @@
+import { useToast } from "@/context/toast";
 import {
   createExpense,
   deleteExpense,
@@ -6,11 +7,14 @@ import {
   updateExpense,
 } from "@/services/expenses";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useIntl } from "react-intl";
 import { useBackupDebounce } from "./use-backup-debounce";
 
 export function useExpenses(reference?: string, id?: string) {
   const queryClient = useQueryClient();
   const debounceBackup = useBackupDebounce();
+  const { showToast } = useToast();
+  const { formatMessage } = useIntl();
 
   const { data, isLoading } = useQuery({
     queryKey: ["expenses", reference],
@@ -27,6 +31,10 @@ export function useExpenses(reference?: string, id?: string) {
         queryKey: ["incomings-expenses-transactions"],
       });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.expense.created" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 
@@ -48,6 +56,10 @@ export function useExpenses(reference?: string, id?: string) {
       queryClient.invalidateQueries({ queryKey: ["expense"] });
       queryClient.refetchQueries({ queryKey: ["details"] });
       debounceBackup();
+      showToast(formatMessage({ id: "toast.expense.updated" }));
+    },
+    onError: () => {
+      showToast(formatMessage({ id: "toast.error" }), "error");
     },
   });
 
