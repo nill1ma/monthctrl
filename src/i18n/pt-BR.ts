@@ -71,6 +71,8 @@ export const pt: Record<string, string> = {
   "details.deleteAll.message":
     "Isso excluirá todas as receitas e despesas de {reference}. Esta ação não pode ser desfeita.",
   "details.deleteAll.label": "Excluir todas as transações desta referência",
+  "details.info.message":
+    'Deslize para a esquerda em um item como "{item}" para editar ou excluir.',
 
   "list.title": "Transações",
   "list.incoming": "Receitas",
@@ -85,6 +87,9 @@ export const pt: Record<string, string> = {
   "list.drawer.create.expense": "Criar despesa",
   "list.drawer.logout": "Sair",
   "list.drawer.profile": "Perfil",
+  "list.info.title": "Dicas",
+  "list.info.message":
+    "Toque em um card para ver os detalhes. Segure para excluir todas as transações daquele mês.",
 
   "create.update.loading": "Aguarde, estamos finalizando esta operação...",
 

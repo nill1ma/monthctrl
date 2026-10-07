@@ -69,6 +69,8 @@ export const en: Record<string, string> = {
   "details.deleteAll.message":
     "This will delete all incomings and expenses for {reference}. This action cannot be undone.",
   "details.deleteAll.label": "Delete all transactions for this reference",
+  "details.info.message":
+    'Swipe left on an item like "{item}" to edit or delete it.',
 
   "list.title": "Transactions",
   "list.incoming": "Incomings",
@@ -83,7 +85,9 @@ export const en: Record<string, string> = {
   "list.drawer.create.expense": "Create Expense",
   "list.drawer.logout": "Logout",
   "list.drawer.profile": "Profile",
-
+  "list.info.title": "Tips",
+  "list.info.message":
+    "Tap a card to see details. Long press to delete all transactions for that month.",
   "create.update.loading": "Wait, we are finishing this operation...",
 
   "form.reference": "Reference",

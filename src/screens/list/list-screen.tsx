@@ -1,4 +1,5 @@
 import { CurrencySelect } from "@/components/molecules/currency-select";
+import { InfoButton } from "@/components/molecules/info-button";
 import { SkeletonRow } from "@/components/ui/skeleton-row";
 import { Spacing } from "@/constants/theme";
 import { useCurrencyTotals } from "@/hooks/use-currency-totals";
@@ -125,6 +126,11 @@ export default function List() {
                 <Text style={[styles.reference, { color: colors.text }]}>
                   {group.reference}
                 </Text>
+                <InfoButton
+                  title={formatMessage({ id: "list.info.title" })}
+                  message={formatMessage({ id: "list.info.message" })}
+                  cancelLabel={formatMessage({ id: "login.cancel" })}
+                />
               </View>
 
               {convertEnabled ? (

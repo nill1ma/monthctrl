@@ -1,3 +1,4 @@
+import { InfoButton } from "@/components/molecules/info-button";
 import { SwipeableRow } from "@/components/molecules/swipeable-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SkeletonSection } from "@/components/ui/skeleton-section";
@@ -231,9 +232,19 @@ export default function DetailsScreen() {
           </SwipeableRow>
         )}
         renderSectionHeader={({ section }) => (
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {section.title}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              {section.title}
+            </Text>
+            <InfoButton
+              title={formatMessage({ id: "list.info.title" })}
+              message={formatMessage(
+                { id: "details.info.message" },
+                { item: section.data[0]?.label ?? "" },
+              )}
+              cancelLabel={formatMessage({ id: "login.cancel" })}
+            />
+          </View>
         )}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: colors.textSecondary }]}>
@@ -253,8 +264,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    marginTop: Spacing.four,
-    marginBottom: Spacing.two,
   },
   row: {
     flexDirection: "row",
@@ -267,4 +276,11 @@ const styles = StyleSheet.create({
   label: { fontSize: 16 },
   value: { fontSize: 16, fontWeight: "600" },
   empty: { fontSize: 16, textAlign: "center", marginTop: Spacing.six },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: Spacing.four,
+    marginBottom: Spacing.two,
+  },
 });
