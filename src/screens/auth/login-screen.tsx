@@ -17,9 +17,18 @@ export default function LoginScreen() {
       submitLabel={formatMessage({ id: "login.loginButton" })}
       submitLabelLoading={formatMessage({ id: "login.loggingIn" })}
       onSubmit={login}
+      footer={
+        <Link href="/forgot-password">
+          <Text style={{ color: "#208AEF" }}>
+            {formatMessage({ id: "forgotPassword.link" })}
+          </Text>
+        </Link>
+      }
     >
       <Link href="/signup">
-        <Text>{formatMessage({ id: "login.signupLink.message" })} </Text>
+        <Text style={{ color: colors.text }}>
+          {formatMessage({ id: "login.signupLink.message" })}{" "}
+        </Text>
         <Text
           style={{
             color: "#208AEF",

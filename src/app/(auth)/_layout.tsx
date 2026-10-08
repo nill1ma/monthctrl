@@ -13,7 +13,9 @@ export default function AuthLayout() {
   return (
     <View style={{ flex: 1 }}>
       <GlobalThemeControl />
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="reset-password" />
+      </Stack>
     </View>
   );
 }

@@ -117,4 +117,19 @@ export const es: Record<string, string> = {
   "toast.profile.saved": "Perfil guardado con éxito",
   "toast.password.changed": "Contraseña cambiada con éxito",
   "toast.error": "Algo salió mal. Inténtalo de nuevo.",
+
+  "forgotPassword.link": "¿Olvidaste tu contraseña?",
+  "forgotPassword.title": "Restablecer contraseña",
+  "forgotPassword.subtitle": "Te enviaremos un enlace a tu correo electrónico",
+  "forgotPassword.submit": "Enviar enlace",
+  "forgotPassword.submitting": "Enviando...",
+  "forgotPassword.error": "Algo salió mal",
+  "forgotPassword.sent.title": "¡Correo enviado!",
+  "forgotPassword.sent.message":
+    "Revisa tu bandeja de entrada y haz clic en el enlace para restablecer tu contraseña.",
+  "forgotPassword.backToLogin": "Volver al inicio de sesión",
+
+  "resetPassword.title": "Nueva contraseña",
+  "resetPassword.subtitle": "Ingresa tu nueva contraseña abajo",
+  "resetPassword.submit": "Guardar contraseña",
 };

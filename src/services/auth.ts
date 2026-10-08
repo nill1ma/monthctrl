@@ -65,7 +65,6 @@ export async function changePassword(
   currentPassword: string,
   newPassword: string,
 ): Promise<AuthResult> {
-  // verifica senha atual
   const { error: signInError } = await supabase.auth.signInWithPassword({
     email,
     password: currentPassword,
@@ -79,5 +78,16 @@ export async function changePassword(
 
   if (updateError) return { error: updateError.message };
 
+  return {};
+}
+export async function requestPasswordReset(email: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "monthctrl://reset-password",
+  });
+  if (error) throw error;
+}
+export async function resetPassword(newPassword: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) return { error: error.message };
   return {};
 }

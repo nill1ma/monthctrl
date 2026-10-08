@@ -20,6 +20,7 @@ type AuthFormProps = {
   submitLabelLoading: string;
   onSubmit: (email: string, password: string) => Promise<{ error?: string }>;
   children?: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 export function AuthForm({
@@ -30,6 +31,7 @@ export function AuthForm({
   submitLabelLoading,
   onSubmit,
   children,
+  footer,
 }: AuthFormProps) {
   const colors = useTheme();
   const [email, setEmail] = useState("");
@@ -117,25 +119,19 @@ export function AuthForm({
         disabled={loading}
         color={"#208AEF"}
       />
-      <Text
-        style={StyleSheet.flatten([
-          styles.login_signup_link,
-          {
-            backgroundColor: colors.background,
-            color: colors.text,
-          },
-        ])}
-      >
+      <View style={[styles.links, { backgroundColor: colors.background }]}>
         {children}
-      </Text>
+        {footer}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  login_signup_link: {
+  links: {
     marginTop: Spacing.two,
-    gap: Spacing.five,
+    gap: Spacing.three,
+    alignItems: "center",
   },
   container: { flex: 1, justifyContent: "center", padding: Spacing.six },
   title: {
