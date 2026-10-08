@@ -71,6 +71,20 @@ export const en: Record<string, string> = {
   "details.deleteAll.label": "Delete all transactions for this reference",
   "details.info.message":
     'Swipe left on an item like "{item}" to edit or delete it.',
+  "details.export.label": "Export PDF",
+
+  "export.drawer.link": "Export PDF",
+  "export.modal.title": "Export PDF",
+  "export.period.label": "Period",
+  "export.period.from": "From",
+  "export.period.to": "To",
+  "export.type.label": "Transaction type",
+  "export.type.all": "All",
+  "export.type.incoming": "Incomings",
+  "export.type.expense": "Expenses",
+  "export.currency.label": "Currency",
+  "export.currency.all": "All",
+  "export.button.label": "Export",
 
   "list.title": "Transactions",
   "list.incoming": "Incomings",

@@ -1,7 +1,10 @@
 import {
+  getAllDistinctReferencesQuery,
+  getDetailedTransactionsByReferences as getDetailedTransactionsByReferencesQuery,
   getDistinctReferences as getDistinctReferencesQuery,
   getGroupedTransactionsByReferences,
 } from "@/db/seeds/queries/list";
+import type { DetailedTransaction } from "@/types/export";
 
 const PAGE_SIZE = 5;
 
@@ -16,6 +19,12 @@ export async function getDistinctReferences(
   pageSize: number = PAGE_SIZE,
 ): Promise<DistinctReferencesResponse> {
   return getDistinctReferencesQuery(page, userId, pageSize);
+}
+
+export async function getAllDistinctReferences(
+  userId: string,
+): Promise<string[]> {
+  return getAllDistinctReferencesQuery(userId);
 }
 
 export type TransactionRow = {
@@ -40,4 +49,11 @@ export async function getTransactionsByReferences(
     expense_value: row.expense_value,
     net_income: row.net_income,
   }));
+}
+
+export async function getDetailedTransactionsByReferences(
+  references: string[],
+  userId: string,
+): Promise<DetailedTransaction[]> {
+  return getDetailedTransactionsByReferencesQuery(userId, references);
 }

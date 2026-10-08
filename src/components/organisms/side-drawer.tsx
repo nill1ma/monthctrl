@@ -10,10 +10,12 @@ import Animated, {
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Spacing } from "@/constants/theme";
+import { useExportMenuPdf } from "@/hooks/use-export-menu-pdf";
 import { useProfile } from "@/hooks/use-profile";
 import { useTheme } from "@/hooks/use-theme";
 import { logout } from "@/services/auth";
 import { LanguageToggle } from "../ui/language-toggle";
+import { ExportPdfModal } from "./export-pdf-modal";
 
 const DRAWER_WIDTH = 240;
 
@@ -31,6 +33,8 @@ export function SideDrawer() {
   const router = useRouter();
   const progress = useSharedValue(0);
   const { profile } = useProfile();
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+  const { exportPdf, isExporting } = useExportMenuPdf();
 
   function toggle() {
     const next = !open;
@@ -69,9 +73,6 @@ export function SideDrawer() {
 
       <Animated.View style={[styles.panel, panelStyle]}>
         <View style={[styles.content, { backgroundColor: colors.background }]}>
-          {/* <Text style={[styles.title, { color: colors.text }]}>
-            {formatMessage({ id: "list.drawer.menu" })}
-          </Text> */}
           <View
             style={[
               styles.profileSection,
@@ -102,6 +103,20 @@ export function SideDrawer() {
               </Text>
             </Pressable>
           ))}
+          <Pressable
+            style={[
+              styles.linkRow,
+              { borderBottomColor: colors.backgroundSelected },
+            ]}
+            onPress={() => {
+              toggle();
+              setExportModalVisible(true);
+            }}
+          >
+            <Text style={[styles.linkText, { color: colors.text }]}>
+              {formatMessage({ id: "export.drawer.link" })}
+            </Text>
+          </Pressable>
 
           <Pressable
             style={[
@@ -134,6 +149,11 @@ export function SideDrawer() {
           </Animated.Text>
         </Pressable>
       </Animated.View>
+      <ExportPdfModal
+        visible={exportModalVisible}
+        onClose={() => setExportModalVisible(false)}
+        onExport={exportPdf}
+      />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { getDatabase } from "@/db/client";
+import type { DetailedTransaction } from "@/types/export";
 import type { GroupedTransaction } from "./types";
 
 /**
@@ -83,7 +84,6 @@ export function getDistinctReferences(
   const db = getDatabase();
   const offset = (page - 1) * pageSize;
 
-  // Total geral
   const totalRow = db.getFirstSync<{ total: number }>(
     `
     SELECT COUNT(DISTINCT reference) AS total
@@ -122,10 +122,27 @@ export function getDistinctReferences(
   };
 }
 
-/**
- * Todas as linhas da view `incomings_expenses_transactions`
- * para um conjunto de references — usado pela tela de detalhes.
- */
+export function getAllDistinctReferencesQuery(userId: string): string[] {
+  const db = getDatabase();
+
+  const rows = db.getAllSync<{ reference: string }>(
+    `
+    SELECT DISTINCT reference
+    FROM (
+      SELECT reference FROM incomings
+        WHERE user_id = ? AND deleted_at IS NULL AND reference IS NOT NULL
+      UNION
+      SELECT reference FROM expenses
+        WHERE user_id = ? AND deleted_at IS NULL AND reference IS NOT NULL
+    )
+    ORDER BY reference DESC
+    `,
+    [userId, userId],
+  );
+
+  return rows.map((r) => r.reference);
+}
+
 export function getTransactionsByReferences(
   references: string[],
   userId: string,
@@ -156,4 +173,31 @@ export function getTransactionsByReferences(
     `,
     [userId, ...references, userId, ...references],
   ) as ReturnType<typeof getTransactionsByReferences>;
+}
+
+export function getDetailedTransactionsByReferences(
+  userId: string,
+  references: string[],
+): DetailedTransaction[] {
+  if (references.length === 0) return [];
+
+  const db = getDatabase();
+  const placeholders = references.map(() => "?").join(", ");
+
+  return db.getAllSync<DetailedTransaction>(
+    `
+    SELECT reference, currency, origin AS description, value, 'incoming' AS type
+    FROM incomings
+    WHERE user_id = ? AND deleted_at IS NULL AND reference IN (${placeholders})
+
+    UNION ALL
+
+    SELECT reference, currency, destination AS description, value, 'expense' AS type
+    FROM expenses
+    WHERE user_id = ? AND deleted_at IS NULL AND reference IN (${placeholders})
+
+    ORDER BY reference DESC, currency ASC, type ASC
+    `,
+    [userId, ...references, userId, ...references],
+  );
 }

@@ -5,6 +5,7 @@ import { SkeletonSection } from "@/components/ui/skeleton-section";
 import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
 import { useExpenses } from "@/hooks/use-expenses";
+import { useExportPdf } from "@/hooks/use-export-pdf";
 import { useIncomings } from "@/hooks/use-incomings";
 import { useTheme } from "@/hooks/use-theme";
 import { formatCurrency, getCurrencyFlag } from "@/lib/currency";
@@ -77,6 +78,20 @@ export default function DetailsScreen() {
     useIncomings();
   const { deleteMutation: deleteExpense, deleteExpensesByReferenceMutate } =
     useExpenses();
+
+  const { exportPdf, isExporting } = useExportPdf({
+    reference: reference ?? "",
+    incomings: (incomings ?? []).map((item) => ({
+      label: item.origin,
+      value: item.value ?? 0,
+      currency: item.currency,
+    })),
+    expenses: (expenses ?? []).map((item) => ({
+      label: item.destination,
+      value: item.value ?? 0,
+      currency: item.currency,
+    })),
+  });
 
   useEffect(() => {
     if (isLoading) return;
@@ -188,15 +203,31 @@ export default function DetailsScreen() {
         options={{
           title: reference ?? "",
           headerRight: () => (
-            <Pressable
-              onPress={handleDeleteAll}
-              hitSlop={8}
-              accessibilityLabel={formatMessage({
-                id: "details.deleteAll.label",
-              })}
-            >
-              <Ionicons name="trash-outline" size={22} color="#EF4444" />
-            </Pressable>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <Pressable
+                onPress={exportPdf}
+                hitSlop={8}
+                disabled={isExporting}
+                accessibilityLabel={formatMessage({
+                  id: "details.export.label",
+                })}
+              >
+                <Ionicons
+                  name="share-outline"
+                  size={22}
+                  color={isExporting ? colors.textSecondary : colors.text}
+                />
+              </Pressable>
+              <Pressable
+                onPress={handleDeleteAll}
+                hitSlop={8}
+                accessibilityLabel={formatMessage({
+                  id: "details.deleteAll.label",
+                })}
+              >
+                <Ionicons name="trash-outline" size={22} color="#EF4444" />
+              </Pressable>
+            </View>
           ),
         }}
       />

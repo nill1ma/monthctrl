@@ -8,7 +8,8 @@
     "scheme": "monthctrl",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.developmentsnil.monthctrl"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +28,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -42,7 +44,13 @@
           "iosUrlScheme": "com.googleusercontent.apps.SEU_IOS_CLIENT_ID"
         }
       ],
-      ["expo-sqlite", { "useSQLCipher": true }]
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

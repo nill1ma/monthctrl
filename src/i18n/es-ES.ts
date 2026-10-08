@@ -64,6 +64,20 @@ export const es: Record<string, string> = {
     "Eliminar todas las transacciones de esta referencia",
   "details.info.message":
     'Desliza hacia la izquierda en un elemento como "{item}" para editar o eliminar.',
+  "details.export.label": "Exportar PDF",
+
+  "export.drawer.link": "Exportar PDF",
+  "export.modal.title": "Exportar PDF",
+  "export.period.label": "Período",
+  "export.period.from": "Desde",
+  "export.period.to": "Hasta",
+  "export.type.label": "Tipo de transacción",
+  "export.type.all": "Todos",
+  "export.type.incoming": "Ingresos",
+  "export.type.expense": "Gastos",
+  "export.currency.label": "Moneda",
+  "export.currency.all": "Todas",
+  "export.button.label": "Exportar",
 
   "list.title": "Transacciones",
   "list.incoming": "Ingresos",
