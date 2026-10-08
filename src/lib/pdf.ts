@@ -167,52 +167,6 @@ export function buildExportPdfHtml(
           const showExpense = filters.transactionType !== "incoming";
           const showBalance = filters.transactionType === "all";
 
-          const incomingsHtml =
-            showIncoming && incomings.length > 0
-              ? `
-        <p class="section-label income-label">Incomings</p>
-        ${incomings
-          .map(
-            (r) => `
-          <tr>
-            <td>${r.description}</td>
-            <td class="amount income">+ ${r.value.toFixed(2)}</td>
-          </tr>`,
-          )
-          .join("")}
-        <tr class="subtotal">
-          <td>Total Incomings</td>
-          <td class="amount income">+ ${totalIncoming.toFixed(2)}</td>
-        </tr>`
-              : "";
-
-          const expensesHtml =
-            showExpense && expenses.length > 0
-              ? `
-        <p class="section-label expense-label">Expenses</p>
-        ${expenses
-          .map(
-            (r) => `
-          <tr>
-            <td>${r.description}</td>
-            <td class="amount expense">- ${r.value.toFixed(2)}</td>
-          </tr>`,
-          )
-          .join("")}
-        <tr class="subtotal">
-          <td>Total Expenses</td>
-          <td class="amount expense">- ${totalExpense.toFixed(2)}</td>
-        </tr>`
-              : "";
-
-          const balanceHtml = showBalance
-            ? `
-        <tr class="balance-row">
-          <td>Balance</td>
-          <td class="amount ${balance >= 0 ? "income" : "expense"}">${balance >= 0 ? "+" : ""} ${balance.toFixed(2)}</td>
-        </tr>`
-            : "";
-
           return `
   <div class="currency-section">
     <h3 class="currency-title">${currency}</h3>
