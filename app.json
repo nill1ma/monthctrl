@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "monthctrl",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.developmentsnil.monthctrl"
