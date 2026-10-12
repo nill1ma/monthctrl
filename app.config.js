@@ -1,27 +1,38 @@
-const { withAndroidManifest } = require("@expo/config-plugins");
+const {
+  withAndroidManifest,
+  withGradleProperties,
+} = require("@expo/config-plugins");
 
-const withGoogleMobileAds = (config) => {
+const APP_ID = "ca-app-pub-4958988852010027~2821861536";
+
+const withGoogleMobileAdsManifest = (config) => {
   return withAndroidManifest(config, (config) => {
-    const manifest = config.modResults;
-    const application = manifest.manifest.application[0];
-
-    if (!application["meta-data"]) {
-      application["meta-data"] = [];
-    }
-
+    const application = config.modResults.manifest.application[0];
+    if (!application["meta-data"]) application["meta-data"] = [];
     application["meta-data"].push({
       $: {
         "android:name": "com.google.android.gms.ads.APPLICATION_ID",
-        "android:value": "ca-app-pub-4958988852010027~2821861536",
+        "android:value": APP_ID,
       },
     });
+    return config;
+  });
+};
 
+const withGoogleMobileAdsGradle = (config) => {
+  return withGradleProperties(config, (config) => {
+    config.modResults.push({
+      type: "property",
+      key: "googleMobileAdsJson",
+      value: JSON.stringify({ android_app_id: APP_ID }),
+    });
     return config;
   });
 };
 
 module.exports = ({ config }) => {
-  config = withGoogleMobileAds(config);
+  config = withGoogleMobileAdsManifest(config);
+  config = withGoogleMobileAdsGradle(config);
   return {
     ...config,
     android: {
