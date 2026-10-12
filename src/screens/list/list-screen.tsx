@@ -1,6 +1,8 @@
+import { AdBanner } from "@/components/molecules/ad-banner";
 import { CurrencySelect } from "@/components/molecules/currency-select";
 import { InfoButton } from "@/components/molecules/info-button";
 import { SkeletonRow } from "@/components/ui/skeleton-row";
+import { AD_UNIT_IDS } from "@/constants/ads";
 import { Spacing } from "@/constants/theme";
 import { useCurrencyTotals } from "@/hooks/use-currency-totals";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
@@ -209,6 +211,7 @@ export default function List() {
           ) : null
         }
       />
+      <AdBanner adUnitId={AD_UNIT_IDS.bannerList} />
     </View>
   );
 }

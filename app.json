@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "monthctrl",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.developmentsnil.monthctrl"
@@ -28,7 +29,6 @@
     },
     "plugins": [
       "expo-router",
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -42,6 +42,13 @@
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.SEU_IOS_CLIENT_ID"
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-4958988852010027~2821861536",
+          "iosAppId": "ca-app-pub-4958988852010027~2821861536"
         }
       ],
       [

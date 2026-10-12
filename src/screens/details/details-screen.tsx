@@ -1,7 +1,9 @@
+import { AdBanner } from "@/components/molecules/ad-banner";
 import { InfoButton } from "@/components/molecules/info-button";
 import { SwipeableRow } from "@/components/molecules/swipeable-row";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SkeletonSection } from "@/components/ui/skeleton-section";
+import { AD_UNIT_IDS } from "@/constants/ads";
 import { Spacing } from "@/constants/theme";
 import { useDetailsTransactions } from "@/hooks/use-details-transactions";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -21,6 +23,7 @@ import {
   Text,
   View,
 } from "react-native";
+
 type TransactionType = "incomings" | "expenses";
 
 type Row = {
@@ -283,6 +286,7 @@ export default function DetailsScreen() {
           </Text>
         }
       />
+      <AdBanner adUnitId={AD_UNIT_IDS.bannerDetails} />
     </View>
   );
 }
