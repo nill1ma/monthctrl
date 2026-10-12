@@ -24,7 +24,7 @@ const withGoogleMobileAdsGradle = (config) => {
     config.modResults.push({
       type: "property",
       key: "googleMobileAdsJson",
-      value: JSON.stringify({ android_app_id: APP_ID }),
+      value: `{"android_app_id":"${APP_ID}"}`,
     });
     return config;
   });
