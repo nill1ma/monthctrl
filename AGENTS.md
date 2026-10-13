@@ -25,17 +25,79 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
+- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators.
+- Route groups: `(app)/` = authenticated screens, `(auth)/` = login/signup/forgot-password.
+- Route files are thin wrappers — actual logic and UI live in `src/screens/`.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
+- Keep non-route code (components, hooks, utils) outside `src/app/`.
 - Docs: https://docs.expo.dev/router/introduction.md
+
+## Folder Structure
+
+```
+src/
+  app/          # routes (Expo Router) — thin files, only import from screens/
+  screens/      # screen logic and UI
+  components/
+    ui/         # primitives (Skeleton, Toggle, etc.)
+    molecules/  # reusable composites (FormField, AdBanner, etc.)
+    organisms/  # complex blocks (SideDrawer, ExportPdfModal, etc.)
+  hooks/        # data hooks (useExpenses, useIncomings, etc.)
+  services/     # local SQLite and Supabase calls
+  db/
+    client.ts   # SQLite initialization
+    migrations.ts
+    seeds/      # SQL queries and initial seeds
+  lib/          # domain utilities (backup, pdf, supabase, google-signin)
+  context/      # providers (Auth, Theme, Toast, Locale, Intl)
+  schemas/      # Zod validation schemas for forms
+  types/        # TypeScript types (including generated supabase.types.ts)
+  constants/    # theme, ads IDs
+  i18n/         # translations (pt-BR, en, es-ES)
+  utils/        # pure helper functions
+```
+
+## Database
+
+- Uses `expo-sqlite` with **SQLCipher** enabled (`useSQLCipher: true` in `app.json`).
+- Initialization and migrations in `src/db/client.ts` and `src/db/migrations.ts`.
+- SQL queries live in `src/db/seeds/queries/` — one file per entity.
+- Services in `src/services/` bridge hooks and queries.
+- Do not write raw SQL outside `src/db/` and `src/services/`.
+
+## Data & State
+
+- **TanStack React Query** for caching and data synchronization.
+- Data hooks live in `src/hooks/` (e.g. `useExpenses`, `useIncomings`).
+- No global state manager (Redux, Zustand) — prefer Query + Context.
+- Remote backup via Supabase Storage — logic in `src/lib/backup/`.
+
+## Authentication
+
+- Supabase Auth: email/password and Google Sign-In.
+- Provider in `src/context/auth.tsx`, client in `src/lib/supabase.ts`.
+- Google Sign-In in `src/lib/google-signin.ts` — do not modify without reading the SHA-1 section in CLAUDE.md.
+
+## Internationalization
+
+- Supported languages: pt-BR, en, es-ES. Files in `src/i18n/`.
+- Provider in `src/context/intl-provider.tsx` using `react-intl`.
+- Always add translation keys in all three languages when adding new text.
 
 ## Building with EAS
 
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
+Use EAS for build, sign, submit (`eas build`, `eas submit`) and OTA updates (`eas update`).
+
+```bash
+# Production Android build (run from project root)
+npx eas-cli@latest build --profile production --platform android
+```
+
 Docs: https://docs.expo.dev/eas/index.md
 
 ## Rules
 
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+- If `ios/` and `android/` directories exist, do not edit them manually — configure native behavior via `app.json` and config plugins.
+- Expo Go does not include custom native modules. After adding a library with native code, rebuild via EAS.
+- Prefer Expo modules over third-party libraries when available.
+- Never use `npm install` or `yarn add` directly — always use `npx expo install`.
