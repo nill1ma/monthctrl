@@ -1,56 +1,104 @@
-# Welcome to your Expo app 👋
+# Month Ctrl
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![Platform](https://img.shields.io/badge/platform-Android-green)](https://play.google.com/store/apps/details?id=com.developmentsnil.monthctrl)
+[![Status](https://img.shields.io/badge/status-internal%20testing-yellow)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)]()
 
-## Get started
+A personal finance mobile app for tracking monthly income and expenses. Built with Expo and React Native.
 
-1. Install dependencies
+## Screenshots
 
-   ```bash
-   npm install
-   ```
+<!-- Add screenshots or a GIF of the main flow here -->
 
-2. Start the app
+## Features
 
-   ```bash
-   npx expo start
-   ```
+- Register and categorize income and expenses
+- Monthly summary with totals by currency
+- Export reports as PDF
+- Encrypted local database (SQLCipher)
+- Automatic cloud backup via Supabase Storage
+- Google Sign-In and email/password authentication
+- Multi-language support (Portuguese, English, Spanish)
+- Dark/light theme
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Framework:** Expo SDK 57 / React Native 0.86.3 / React 19
+- **Routing:** Expo Router (file-based)
+- **Auth & Backend:** Supabase
+- **Local DB:** expo-sqlite + SQLCipher
+- **State/Cache:** TanStack React Query
+- **Forms:** React Hook Form + Zod
+- **Ads:** Google AdMob
+- **i18n:** react-intl + expo-localization
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Getting Started
 
-## Get a fresh project
+### Prerequisites
 
-When you're ready, run:
+- Node.js 18+
+- Expo CLI
+- EAS CLI (for builds)
+
+### Installation
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Environment
 
-### Other setup steps
+Create a `.env` file at the project root:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT=your_google_web_client_id
+```
 
-## Learn more
+### Running
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+# Start dev server (requires a development build)
+npx expo start --dev-client --clear
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+> **Note:** This project uses native modules (SQLCipher, Google Sign-In, AdMob) and cannot run on Expo Go. A development build is required.
 
-## Join the community
+### Development Build
 
-Join our community of developers creating universal apps.
+```bash
+npx eas-cli@latest build --profile development --platform android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Production Build
+
+```bash
+npx eas-cli@latest build --profile production --platform android
+```
+
+## Project Structure
+
+```
+src/
+  app/          # Routes (Expo Router)
+  screens/      # Screen logic and UI
+  components/   # UI primitives, molecules and organisms
+  hooks/        # Data hooks
+  services/     # SQLite and Supabase queries
+  db/           # Database client, migrations and seeds
+  lib/          # Domain utilities (backup, pdf, supabase)
+  context/      # React providers
+  schemas/      # Zod validation schemas
+  i18n/         # Translation files
+  types/        # TypeScript types
+  constants/    # Theme and ad unit IDs
+```
+
+## Contributing
+
+See [AGENTS.md](./AGENTS.md) for development guidelines and conventions.
+
+## License
+
+MIT
