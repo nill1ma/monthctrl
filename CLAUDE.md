@@ -1,3 +1,5 @@
+@.claude/local.md
+
 @AGENTS.md
 
 # Month Ctrl — Project Context
