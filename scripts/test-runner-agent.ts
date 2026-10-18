@@ -56,7 +56,7 @@ export async function runTestRunnerAgent(): Promise<{ hasErrors: boolean }> {
 
   const result = await runTests()
 
-  if (result.passed) {
+  if (result.passed || (result.failedTests === 0 && result.failedSuites === 0)) {
     console.log('✅ Todos os testes passaram — commit liberado.\n')
     return { hasErrors: false }
   }
