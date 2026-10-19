@@ -252,6 +252,11 @@ Seja direto e prático. Use emojis para facilitar a leitura.`,
 }
 
 runPrAgent().catch(err => {
+  const isQuotaError = err?.message?.includes("quota") || err?.lastError?.message?.includes("quota") || err?.statusCode === 429 || err?.lastError?.statusCode === 429
+  if (isQuotaError) {
+    console.warn("⚠️  PR Agent: quota da API Gemini esgotada — análise ignorada neste CI.")
+    process.exit(0)
+  }
   console.error(err)
   process.exit(1)
 })
