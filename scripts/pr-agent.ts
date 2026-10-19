@@ -227,7 +227,7 @@ async function runPrAgent() {
     const context = await buildContext(lintResults)
 
     const { text } = await generateText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-2.5-flash'),
       system: `Você é um especialista em qualidade de código React Native, TypeScript e Expo.
 Analise os warnings do ESLint e gere um relatório em português formatado em Markdown para ser postado como comentário no GitHub.
 Para cada problema: explique o que é, mostre o código corrigido (antes/depois).
