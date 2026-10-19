@@ -52,6 +52,7 @@
   "devDependencies": {
     "@ai-sdk/google": "^1.2.22",
     "@react-native/jest-preset": "^0.86.3",
+    "@testing-library/react-native": "^13.3.3",
     "@types/lodash": "^4.17.25",
     "@types/pako": "^2.0.4",
     "@types/react": "~19.2.2",
@@ -87,8 +88,21 @@
   "private": true,
   "jest": {
     "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/__mocks__/",
+      "/jest-setup/",
+      "/setup/"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^react-native$": "<rootDir>/__mocks__/react-native.js"
+    },
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/setup/patch-appstate.js"
     ]
   }
 }
