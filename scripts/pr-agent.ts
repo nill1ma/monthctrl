@@ -227,7 +227,7 @@ async function runPrAgent() {
     const context = await buildContext(lintResults)
 
     const { text } = await generateText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-3.8-flash'),
       system: `Você é um especialista em qualidade de código React Native, TypeScript e Expo.
 Analise os warnings do ESLint e gere um relatório em português formatado em Markdown para ser postado como comentário no GitHub.
 Para cada problema: explique o que é, mostre o código corrigido (antes/depois).
@@ -252,6 +252,11 @@ Seja direto e prático. Use emojis para facilitar a leitura.`,
 }
 
 runPrAgent().catch(err => {
+  const isQuotaError = err?.message?.includes("quota") || err?.lastError?.message?.includes("quota") || err?.statusCode === 429 || err?.lastError?.statusCode === 429
+  if (isQuotaError) {
+    console.warn("⚠️  PR Agent: quota da API Gemini esgotada — análise ignorada neste CI.")
+    process.exit(0)
+  }
   console.error(err)
   process.exit(1)
 })

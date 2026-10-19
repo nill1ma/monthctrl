@@ -1,0 +1,10 @@
+export const mockExpensesQueries = { createExpense: jest.fn(), updateExpense: jest.fn(), deleteExpense: jest.fn() }
+export const mockIncomingsQueries = { createIncoming: jest.fn(), updateIncoming: jest.fn(), deleteIncoming: jest.fn() }
+export const mockListQueries = { getTransactionsByReferences: jest.fn(), getDetailedTransactionsByReferences: jest.fn() }
+export const mockCurrencyTotalsQueries = { getCurrencyTotals: jest.fn(), getCurrenciesInRange: jest.fn() }
+export const mockCategoriesQueries = { getCategoriesByType: jest.fn() }
+jest.mock('../../db/seeds/queries/expenses', () => mockExpensesQueries)
+jest.mock('../../db/seeds/queries/incomings', () => mockIncomingsQueries)
+jest.mock('../../db/seeds/queries/list', () => mockListQueries)
+jest.mock('../../db/seeds/queries/currency-totals', () => mockCurrencyTotalsQueries)
+jest.mock('../../db/seeds/queries/categories', () => mockCategoriesQueries)
