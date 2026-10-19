@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 // Mocka o módulo problemático do expo que quebra no jest-expo 57
 jest.mock('expo-modules-core', () => ({

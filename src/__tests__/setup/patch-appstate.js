@@ -1,3 +1,4 @@
+/* eslint-env jest */
 // Patch direto no módulo react-native já carregado pelo jest-expo
 // Necessário porque moduleNameMapper do preset não pode ser sobrescrito
 const RN = require('react-native');

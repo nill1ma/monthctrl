@@ -8,7 +8,9 @@ export function createWrapper() {
       mutations: { retry: false },
     },
   })
-  return ({ children }: { children: React.ReactNode }) => (
+  const QueryClientWrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
+  QueryClientWrapper.displayName = 'QueryClientWrapper'
+  return QueryClientWrapper
 }

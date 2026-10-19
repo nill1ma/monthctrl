@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 // Instala Response global antes que expo/src/winter/fetch/FetchResponse tente extendê-lo
 if (typeof globalThis.Response === 'undefined') {

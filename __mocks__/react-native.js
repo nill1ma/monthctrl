@@ -1,3 +1,4 @@
+/* eslint-env jest */
 const mockRemove = jest.fn()
 const mockAddEventListener = jest.fn(() => ({ remove: mockRemove }))
 
